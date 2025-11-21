@@ -1,61 +1,135 @@
-# simulacao-investimento
+# 📘 API Simulação de Investimento
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+API desenvolvida em **Quarkus** para simulação de investimentos, utilizando **SQL Server** como banco de dados e **Keycloak** para autenticação via OIDC.  
+Inclui documentação interativa via **Swagger UI**.
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+![Java](https://img.shields.io/badge/Java-21-blue?logo=java)  
+![Quarkus](https://img.shields.io/badge/Quarkus-3.29.3-red?logo=quarkus)  
+![Docker](https://img.shields.io/badge/Docker-Ready-blue?logo=docker)  
+![Keycloak](https://img.shields.io/badge/Keycloak-22.0.1-green?logo=keycloak)  
+![SQLServer](https://img.shields.io/badge/SQLServer-2022-lightgrey?logo=microsoftsqlserver)
 
-## Running the application in dev mode
+---
 
-You can run your application in dev mode that enables live coding using:
+## 🚀 Pré-requisitos
 
-```shell script
-./mvnw quarkus:dev
+- [Git](https://git-scm.com/downloads)  
+- [Docker Desktop](https://www.docker.com/products/docker-desktop)  
+- [Maven](https://maven.apache.org/download.cgi) (ou use o wrapper `./mvnw`)  
+- Java 21 (JDK)  
+
+---
+
+## 📥 Clonar o repositório
+
+```bash
+git clone https://github.com/seu-usuario/simulacao-investimento.git
+cd simulacao-investimento
 ```
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
+---
 
-## Packaging and running the application
+## ▶️ Subir os containers
 
-The application can be packaged using:
-
-```shell script
-./mvnw package
+```bash
+docker-compose up --build
 ```
 
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
+Isso irá:
 
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
+- Criar o banco `investimentos` no SQL Server.  
+- Subir o Keycloak em `http://localhost:8180`.  
+- Subir a API em `http://localhost:8081`.  
 
-If you want to build an _über-jar_, execute the following command:
+---
 
-```shell script
-./mvnw package -Dquarkus.package.jar.type=uber-jar
+## 🔑 Configuração do Keycloak
+
+1. Acesse 👉 [http://localhost:8180](http://localhost:8180)  
+   Login inicial: `admin / admin` (realm `master`).  
+
+2. Importe o arquivo `invest-api-realm.json`.  
+   - Realm: `invest-api`  
+   - Client: `api-client` (secret: `secret`)  
+   - Usuário de teste: `testuser / password`  
+
+3. Após importar, o Quarkus conseguirá autenticar contra o Keycloak.  
+
+---
+
+## ⚙️ Configuração da API
+
+O `application.properties` já está preparado para conectar ao SQL Server e ao Keycloak.  
+
+---
+
+## 🧪 Testar a API
+
+- Swagger UI 👉 [http://localhost:8081/q/swagger-ui](http://localhost:8081/q/swagger-ui)  
+- OpenAPI 👉 [http://localhost:8081/q/openapi](http://localhost:8081/q/openapi)  
+
+No Swagger UI:
+1. Clique em **Authorize**.  
+2. Faça login com `testuser / password`.  
+3. Execute os endpoints protegidos.  
+
+---
+
+## 📌 Exemplos de requisições
+
+### 🔐 Obter token no Keycloak
+```bash
+curl -X POST "http://localhost:8180/realms/invest-api/protocol/openid-connect/token" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "client_id=api-client" \
+  -d "client_secret=secret" \
+  -d "grant_type=password" \
+  -d "username=testuser" \
+  -d "password=password"
 ```
 
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
-
-## Creating a native executable
-
-You can create a native executable using:
-
-```shell script
-./mvnw package -Dnative
+### 📊 Chamar endpoint protegido
+```bash
+curl -X GET "http://localhost:8081/investimentos" \
+  -H "Authorization: Bearer <TOKEN>"
 ```
 
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
+---
 
-```shell script
-./mvnw package -Dnative -Dquarkus.native.container-build=true
+## 🏗️ Arquitetura
+
+A arquitetura da solução é composta por três principais componentes:
+
+- **API Quarkus**: exposta em `http://localhost:8081`, responsável pela lógica de negócios.  
+- **Keycloak**: gerencia autenticação e autorização via OIDC, exposto em `http://localhost:8180`.  
+- **SQL Server**: banco de dados relacional para persistência dos investimentos.  
+
+Fluxo simplificado:
+
+```
+[ Usuário ] → [ Swagger UI / API Quarkus ] → [ Keycloak (OIDC) ]
+                                   ↓
+                             [ SQL Server ]
 ```
 
-You can then execute your native executable with: `./target/simulacao-investimento-1.0.0-SNAPSHOT-runner`
+## 📌 Comandos úteis
 
-If you want to learn more about building native executables, please consult <https://quarkus.io/guides/maven-tooling>.
+- **Parar containers**:
+  ```bash
+  docker-compose down
+  ```
 
-## Related Guides
+- **Rebuild completo**:
+  ```bash
+  ./mvnw clean package -DskipTests
+  docker-compose up --build
+  ```
 
-- REST ([guide](https://quarkus.io/guides/rest)): A Jakarta REST implementation utilizing build time processing and Vert.x. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it.
-- REST Jackson ([guide](https://quarkus.io/guides/rest#json-serialisation)): Jackson serialization support for Quarkus REST. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it
-- Hibernate ORM with Panache ([guide](https://quarkus.io/guides/hibernate-orm-panache)): Simplify your persistence code for Hibernate ORM via the active record or the repository pattern
-- JDBC Driver - PostgreSQL ([guide](https://quarkus.io/guides/datasource)): Connect to the PostgreSQL database via JDBC
+---
+
+## ✅ Resumo
+
+- Clone o projeto.  
+- Suba os containers com `docker-compose up --build`.  
+- Importe o realm `invest-api` no Keycloak.  
+- Acesse a API em `http://localhost:8081/q/swagger-ui`.  
