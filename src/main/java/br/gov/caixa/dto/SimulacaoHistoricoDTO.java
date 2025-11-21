@@ -1,0 +1,27 @@
+package br.gov.caixa.dto;
+
+import br.gov.caixa.entity.Simulacao;
+
+import java.time.LocalDateTime;
+
+public class SimulacaoHistoricoDTO {
+    public Long id;
+    public Long clienteId;
+    public String produto;
+    public Double valorInvestido;
+    public Double valorFinal;
+    public Integer prazoMeses;
+    public LocalDateTime dataSimulacao;
+
+    public static SimulacaoHistoricoDTO fromEntity(Simulacao simulacao, String nomeProduto) {
+        SimulacaoHistoricoDTO dto = new SimulacaoHistoricoDTO();
+        dto.id = simulacao.getId();
+        dto.clienteId = simulacao.getClienteId();
+        dto.produto = nomeProduto;
+        dto.valorInvestido = simulacao.getValorInvestido();
+        dto.valorFinal = simulacao.getValorFinal();
+        dto.prazoMeses = simulacao.getPrazoMeses();
+        dto.dataSimulacao = simulacao.getDataSimulacao();
+        return dto;
+    }
+}

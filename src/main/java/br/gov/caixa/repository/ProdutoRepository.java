@@ -1,0 +1,34 @@
+package br.gov.caixa.repository;
+
+import br.gov.caixa.entity.ProdutoInvestimento;
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import jakarta.enterprise.context.ApplicationScoped;
+
+import java.util.List;
+import java.util.Optional;
+
+@ApplicationScoped
+public class ProdutoRepository implements PanacheRepository<ProdutoInvestimento> {
+
+    public Optional<ProdutoInvestimento> findByTipoAndRisco(String tipo, String riscoAceito){
+        return find("tipo = ?1 and risco = ?2",
+                    tipo, riscoAceito).firstResultOptional();
+    }
+
+    public List<ProdutoInvestimento> findByRisco(String risco){
+          return find("risco = ?1", risco).list();
+    }
+
+    public List<ProdutoInvestimento> listAllOrderedByRentabilidadeDesc(){
+        return find("ORDER BY rentabilidade DESC").list();
+    }
+
+    public List<ProdutoInvestimento> findByPerfil(String perfilRisco){
+        return switch (perfilRisco){
+             case "Conservador" -> list("risco = ?1", "Baixo");
+             case "Moderado" -> list("risco in (?1, ?2", "Baixo", "Médio");
+             case "Agressivo" -> list("risco in (?1, ?2)", "Médio", "Alto");
+            default -> List.of();
+        };
+    }
+}
