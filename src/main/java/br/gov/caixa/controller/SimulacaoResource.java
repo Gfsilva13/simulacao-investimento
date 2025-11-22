@@ -8,9 +8,11 @@ import br.gov.caixa.service.SimulacaoService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
+
 import java.util.List;
 
-
+@SecurityRequirement(name = "SecurityScheme")
 @Path("/simular")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)

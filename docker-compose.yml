@@ -1,49 +1,62 @@
-services:
-  keycloak:
-    image: quay.io/keycloak/keycloak:22.0.1
-    command: start-dev
-    environment:
-      KC_DB: dev-mem
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin
-    ports:
-      - "8180:8080"
-    networks:
-      - investnet
+version: "3.9"
 
-  db:
+services:
+  sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: sqlserver
     environment:
-      SA_PASSWORD: "StrongPassword123"
+      SA_PASSWORD: "StrongPass123!"
       ACCEPT_EULA: "Y"
+      MSSQL_PID: "Developer"
     ports:
       - "1433:1433"
-    volumes:
-      - ./sqlserver-init:/docker-entrypoint-initdb.d
-    networks:
-      - investnet
+    healthcheck:
+      test: ["CMD-SHELL", "sqlcmd -U sa -P StrongPass123! -Q 'SELECT 1'"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
 
-  invest-api:
-    build: .
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.1
+    container_name: keycloak
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    command: start-dev --import-realm
+    volumes:
+      - ./keycloak-data/import:/opt/keycloak/data/import
+    ports:
+      - "8180:8080"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/realms/master"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: api
+    depends_on:
+      - sqlserver
+      - keycloak
+    environment:
+      QUARKUS_DATASOURCE_USERNAME: sa
+      QUARKUS_DATASOURCE_PASSWORD: StrongPass123!
+      QUARKUS_DATASOURCE_JDBC_URL: "jdbc:sqlserver://sqlserver:1433;databaseName=investimentos;encrypt=false"
+      QUARKUS_OIDC_AUTH_SERVER_URL: "http://keycloak:8080/realms/invest-api"
+      QUARKUS_DATASOURCE_DB_KIND: mssql
+      QUARKUS_HIBERNATE_ORM_DATABASE_GENERATION: update
     ports:
       - "8081:8080"
-    depends_on:
-      - keycloak
-      - db
-    environment:
-      QUARKUS_DATASOURCE_JDBC_URL: jdbc:sqlserver://db:1433;databaseName=investimentos
-      QUARKUS_DATASOURCE_USERNAME: sa
-      QUARKUS_DATASOURCE_PASSWORD: StrongPassword123
-      QUARKUS_DATASOURCE_DB_KIND: other
-      QUARKUS_DATASOURCE_JDBC_DRIVER: com.microsoft.sqlserver.jdbc.SQLServerDriver
-      QUARKUS_HIBERNATE_ORM_DIALECT: org.hibernate.dialect.SQLServerDialect
-      QUARKUS_HIBERNATE_ORM_DATABASE_GENERATION: update
-      QUARKUS_OIDC_AUTH_SERVER_URL: http://keycloak:8080/realms/invest-api
-      QUARKUS_OIDC_CLIENT_ID: api-client
-      QUARKUS_OIDC_CREDENTIALS_SECRET: secret
-    networks:
-      - investnet
-
-networks:
-  investnet:
+    volumes:
+      - ./scripts/wait-for-it.ps1:/scripts/wait-for-it.ps1
+      - ./run-api.ps1:/deployments/run-api.ps1
+    entrypoint: >
+      powershell -File /scripts/wait-for-it.ps1
+      -Host sqlserver -Port 1433 -Timeout 60
+      -Command "powershell -File /scripts/wait-for-it.ps1 -Host keycloak -Port 8080 -Timeout 60 -Command 'powershell -File /deployments/run-api.ps1'"

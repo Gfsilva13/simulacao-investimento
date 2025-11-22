@@ -12,10 +12,12 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import java.util.List;
 
+@SecurityRequirement(name = "SecurityScheme")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name="simulações")
@@ -26,7 +28,7 @@ public class SimulacaoController {
 
     @POST
     @Path("/simular-investimento")
-    @RolesAllowed("user")
+   // @RolesAllowed("user")
     public Response simularInvestimentoESalvar(@Valid SimulacaoRequest request){
         try {
             SimulacaoResponse response = simulacaoService.simular(request);
@@ -40,14 +42,14 @@ public class SimulacaoController {
 
     @GET
     @Path("/simulacoes")
-    @RolesAllowed("user")
+   // @RolesAllowed("user")
     public List<SimulacaoHistoricoDTO> listaSimulacoes(){
         return simulacaoService.listarTodas();
     }
 
     @GET
     @Path("/simulacoes/por-produto-dia")
-    @RolesAllowed("user")
+   // @RolesAllowed("user")
     public List<SimulacaoResumoPorProdutoDTO> listarPorProdutoEDia(){
         return simulacaoService.resumoPorProdutoEDia();
     }
