@@ -1,23 +1,16 @@
 {
   "realm": "invest-api",
   "enabled": true,
+
   "registrationAllowed": false,
   "loginWithEmailAllowed": true,
   "duplicateEmailsAllowed": false,
   "resetPasswordAllowed": true,
-  "editUsernameAllowed": false,
-  "sslRequired": "none",
 
   "roles": {
     "realm": [
-      {
-        "name": "user",
-        "description": "Role padrão para usuários comuns"
-      },
-      {
-        "name": "admin",
-        "description": "Role para administradores"
-      }
+      { "name": "user" },
+      { "name": "admin" }
     ]
   },
 
@@ -26,47 +19,27 @@
       "clientId": "api-client",
       "enabled": true,
       "protocol": "openid-connect",
-      "clientAuthenticatorType": "client-secret",
-      "secret": "secret",
 
       "publicClient": false,
       "bearerOnly": false,
       "directAccessGrantsEnabled": true,
-      "serviceAccountsEnabled": true,
-      "authorizationServicesEnabled": true,
-      "fullScopeAllowed": true,
+      "secret": "secret",
 
       "redirectUris": [
         "http://localhost:8081/*"
       ],
       "webOrigins": [
-        "http://localhost:8081"
+        "*"
       ],
 
       "defaultClientScopes": [
-        "web-origins",
         "roles",
-        "microprofile-jwt"
-      ],
-      "optionalClientScopes": [
-        "address",
-        "email",
-        "phone",
-        "profile"
+        "web-origins",
+        "profile",
+        "email"
       ],
 
       "protocolMappers": [
-        {
-          "name": "audience mapper",
-          "protocol": "openid-connect",
-          "protocolMapper": "oidc-audience-mapper",
-          "consentRequired": false,
-          "config": {
-            "included.client.audience": "api-client",
-            "id.token.claim": "true",
-            "access.token.claim": "true"
-          }
-        },
         {
           "name": "realm roles",
           "protocol": "openid-connect",
@@ -80,6 +53,16 @@
             "claim.name": "realm_access.roles",
             "jsonType.label": "String"
           }
+        },
+     {
+          "name": "audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": {
+            "included.client.audience": "api-client",
+            "access.token.claim": "true",
+            "id.token.claim": "true"
+          }
         }
       ]
     }
@@ -88,10 +71,10 @@
   "users": [
     {
       "username": "testuser",
+      "firstName": "Teste",
+      "lastName": "User",
       "enabled": true,
       "emailVerified": true,
-      "firstName": "Test",
-      "lastName": "User",
       "email": "testuser@example.com",
       "credentials": [
         {
@@ -100,23 +83,25 @@
           "temporary": false
         }
       ],
-      "realmRoles": ["user"]
+      "realmRoles": ["user"],
+      "requiredActions": [ ]
     },
     {
       "username": "adminuser",
       "enabled": true,
-      "emailVerified": true,
       "firstName": "Admin",
       "lastName": "User",
+      "emailVerified": true,
       "email": "adminuser@example.com",
       "credentials": [
         {
           "type": "password",
-          "value": "adminpass",
+          "value": "password",
           "temporary": false
         }
       ],
-      "realmRoles": ["admin"]
+      "realmRoles": ["admin"],
+      "requiredActions": [ ]
     }
   ]
 }

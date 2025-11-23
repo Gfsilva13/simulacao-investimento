@@ -78,34 +78,55 @@
 #   accessed directly. (example: "foo.example.com,bar.example.com")
 #
 ###
-
-# Usando a imagem do Eclipse Temurin JDK 21
+#
 FROM eclipse-temurin:21-jdk
 
-# Diretório de trabalho
-WORKDIR /work/
+WORKDIR /app
 
-# Copiando a aplicação Quarkus
-COPY target/quarkus-app/lib/ /work/lib/
-COPY target/quarkus-app/app/ /work/app/
-COPY target/quarkus-app/quarkus/ /work/quarkus/
-COPY target/quarkus-app/quarkus-run.jar /work/quarkus-run.jar
+COPY target/quarkus-app/lib/ /app/lib/
+COPY target/quarkus-app/app/ /app/app/
+COPY target/quarkus-app/quarkus/ /app/quarkus/
+COPY target/quarkus-app/quarkus-run.jar/ /app/quarkus-run.jar
 
-# Variáveis de ambiente
-ENV QUARKUS_DATASOURCE_JDBC_URL="jdbc:sqlserver://db:1433;databaseName=investimentos;encrypt=false;trustServerCertificate=true"
-ENV QUARKUS_DATASOURCE_USERNAME="sa"
-ENV QUARKUS_DATASOURCE_PASSWORD="StrongPassword123"
-ENV QUARKUS_DATASOURCE_DB_KIND="mssql"
-ENV QUARKUS_DATASOURCE_JDBC_DRIVER="com.microsoft.sqlserver.jdbc.SQLServerDriver"
-ENV QUARKUS_HIBERNATE_ORM_DIALECT="org.hibernate.dialect.SQLServerDialect"
-ENV QUARKUS_HIBERNATE_ORM_DATABASE_GENERATION="update"
-
-ENV QUARKUS_OIDC_AUTH_SERVER_URL="http://keycloak:8080/realms/invest-api"
-ENV QUARKUS_OIDC_CLIENT_ID="api-client"
-ENV QUARKUS_OIDC_CREDENTIALS_SECRET="secret"
-
-# Porta exposta
 EXPOSE 8080
 
-# Comando de execução
-CMD ["java", "-jar", "/work/quarkus-run.jar"]
+CMD ["java", "-jar", "/app/quarkus-run.jar"]
+
+## Entrypoint com wait-for-it
+#COPY ./scripts/wait-for-it.sh/ /app/wait-for-it.sh
+#RUN chmod +x /app/wait-for-it.sh
+#ENTRYPOINT ["/app/wait-for-it.sh", "sqlserver", "1433", "--timeout=600", "--", "java", "-jar", "/app/quarkus-run.jar"]
+#ENTRYPOINT ["/app/wait-for-it.sh", "sqlserver:1433", "--timeout=60", "--strict", "--", "java", "-jar", "/app/quarkus-run.jar"]
+##ENTRYPOINT ["/app/wait-for-it.sh", "sqlserver", "1433", "--", "java", "-jar", "/app/quarkus-run.jar"]
+
+## Usando a imagem do Eclipse Temurin JDK 21
+#FROM eclipse-temurin:21-jdk
+#
+## Diretório de trabalho
+#WORKDIR /app
+#
+## Copiando a aplicação Quarkus
+#COPY target/quarkus-app/lib/ /app/lib/
+#COPY target/quarkus-app/app/ /app/app/
+#COPY target/quarkus-app/quarkus/ /app/quarkus/
+#COPY target/quarkus-app/quarkus-run.jar /app/quarkus-run.jar
+#
+### Variáveis de ambiente (Lembre: o compose sobrescreve estas)
+##ENV QUARKUS_DATASOURCE_JDBC_URL="jdbc:sqlserver://sqlserver:1433;databaseName=investimentos;encrypt=false;trustServerCertificate=true"
+##ENV QUARKUS_DATASOURCE_USERNAME="sa"
+##ENV QUARKUS_DATASOURCE_PASSWORD="StrongPass123!"
+##ENV QUARKUS_DATASOURCE_DB_KIND="mssql"
+##ENV QUARKUS_DATASOURCE_JDBC_DRIVER="com.microsoft.sqlserver.jdbc.SQLServerDriver"
+##ENV QUARKUS_HIBERNATE_ORM_DIALECT="org.hibernate.dialect.SQLServerDialect"
+##ENV QUARKUS_HIBERNATE_ORM_DATABASE_GENERATION="update"
+##
+##ENV QUARKUS_OIDC_AUTH_SERVER_URL="http://keycloak:8080/realms/invest-api"
+##ENV QUARKUS_OIDC_CLIENT_ID="api-client"
+##ENV QUARKUS_OIDC_CREDENTIALS_SECRET="secret"
+#
+## Porta exposta
+#EXPOSE 8080
+#
+## Comando default (substituído pelo entrypoint no docker-compose)
+#CMD ["java", "-jar", "/work/quarkus-run.jar"]
+
