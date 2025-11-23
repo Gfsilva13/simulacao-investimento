@@ -48,12 +48,12 @@ Isso irá:
 1. Acesse 👉 [http://localhost:8180](http://localhost:8180)  
    Login inicial: `admin / admin` (realm `master`).  
 
-2. Importe o arquivo `invest-api-realm.json`.  
+2. Ao subir a aplicação será importado o arquivo `invest-api-realm.json` que irá criar o Realm.  
    - Realm: `invest-api`  
    - Client: `api-client` (secret: `secret`)  
    - Usuário de teste: `testuser / password`  
 
-3. Após importar, o Quarkus conseguirá autenticar contra o Keycloak.  
+3. Após importar, o Quarkus conseguirá autenticar com o Keycloak.  
 
 ---
 
@@ -65,13 +65,17 @@ O `application.properties` já está preparado para conectar ao SQL Server e ao 
 
 ## 🧪 Testar a API
 
+- Gere o token. Veja exemplo com o Postman: http://localhost:8180/realms/invest-api/protocol/openid-connect/token
+<img width="620" height="240" alt="image" src="https://github.com/user-attachments/assets/b66388a4-6c0b-4290-ac27-c92cc14e2a8f" />
+
 - Swagger UI 👉 [http://localhost:8081/q/swagger-ui](http://localhost:8081/q/swagger-ui)  
 - OpenAPI 👉 [http://localhost:8081/q/openapi](http://localhost:8081/q/openapi)  
 
 No Swagger UI:
-1. Clique em **Authorize**.  
-2. Faça login com `testuser / password`.  
-3. Execute os endpoints protegidos.  
+1. Clique em **Authorize**.
+2. Faça login com `testuser / password`.
+3. Utilize o Token gerado na ferramenta.
+4. Execute os endpoints protegidos.  
 
 ---
 
