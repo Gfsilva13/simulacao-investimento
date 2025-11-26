@@ -32,6 +32,8 @@ cd simulacao-investimento
 ## ▶️ Subir os containers
 
 ```bash
+ ./mvnw clean package -DskipTests
+
 docker-compose up --build
 ```
 
