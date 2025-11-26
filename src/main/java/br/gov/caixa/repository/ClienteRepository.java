@@ -10,6 +10,7 @@ import java.util.Optional;
 public class ClienteRepository implements PanacheRepository<Cliente> {
 
     public Optional<Cliente> findByOptional(Long id){
+        System.out.println("REPOSITORY");
         return find("id", id).firstResultOptional();
     }
 }

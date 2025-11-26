@@ -3,14 +3,18 @@ services:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: sqlserver
     environment:
-      SA_PASSWORD: "StrongPass123!"
+      SA_PASSWORD: "Senhaforte123456"
       ACCEPT_EULA: "Y"
     ports:
       - "1433:1433"
+#    healthcheck:
+#      test: [ "CMD", "/opt/mssql-tools/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "Senhaforte123456", "-Q", "SELECT 1" ]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 10
     volumes:
       - sqlserver-data:/var/opt/mssql
-      - ./sqlserver-init:/docker-entrypoint-initdb.d
-    restart: always
+    restart: unless-stopped
 
   keycloak:
     image: quay.io/keycloak/keycloak:24.0.1
@@ -19,308 +23,35 @@ services:
       - start-dev
       - --import-realm
     environment:
-      KEYCLOAK_ADMIN: "admin"
-      KEYCLOAK_ADMIN_PASSWORD: "admin"
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HTTP_ENABLED: "true"
+      KC_HTTP_PORT: 8080
+      KC_HOSTNAME_URL: http://localhost:8180
+      KC_HOSTNAME_ADMIN_URL: http://localhost:8180
     volumes:
       - ./keycloak-data/import:/opt/keycloak/data/import
     ports:
       - "8180:8080"
-#    depends_on:
-#      sqlserver:
-#          condition: service_healthy
-    restart: always
+    restart: unless-stopped
+
   api:
-    build:
-       context: .
-       dockerfile: Dockerfile
+    image: simulacao-investimento-api:latest
     container_name: api
     depends_on:
        keycloak:
           condition: service_started
+       sqlserver:
+        condition: service_started
+    environment:
+       QUARKUS_DATASOURCE_USERNAME: sa
+       QUARKUS_DATASOURCE_PASSWORD: Senhaforte123456
+       # 24/11 22.35 QUARKUS_DATASOURCE_JDBC_URL: jdbc:sqlserver://sqlserver:1433;databaseName=investimentos
+       QUARKUS_DATASOURCE_JDBC_URL: jdbc:sqlserver://sqlserver:1433;databaseName=investimentos;encrypt=true;trustServerCertificate=true
     ports:
       - "8081:8080"
-    #entrypoint: ["/app/wait-for-it.sh", "sqlserver:1433", "--timeout=300", "--", "java", "-jar", "/app/quarkus-run.jar"]
-    environment:
-      DATABASE_URL: "jdbc:sqlserver://sqlserver:1433;databaseName=investimentos"
-    restart: always
+#    environment:
+#      DATABASE_URL: "jdbc:sqlserver://localhost:1433;databaseName=investimentos"
+    restart: unless-stopped
 volumes:
   sqlserver-data:
-
-
-
-#      QUARKUS_DATASOURCE_USERNAME: sa
-#      QUARKUS_DATASOURCE_PASSWORD: StrongPass123!
-#      QUARKUS_DATASOURCE_JDBC_URL: "jdbc:sqlserver://sqlserver:1433;databaseName=investimentos;encrypt=false;trustServerCertificate=true"
-#      QUARKUS_DATASOURCE_DB_KIND: mssql
-#      QUARKUS_DATASOURCE_JDBC_DRIVER: "com.microsoft.sqlserver.jdbc.SQLServerDriver"
-#      QUARKUS_HIBERNATE_ORM_DIALECT: "org.hibernate.dialect.SQLServerDialect"
-#      QUARKUS_HIBERNATE_ORM_DATABASE_GENERATION: update
-#
-#      QUARKUS_OIDC_AUTH_SERVER_URL: "http://keycloak:8080/realms/invest-api"
-#      QUARKUS_OIDC_CLIENT_ID: "api-client"
-#      QUARKUS_OIDC_CREDENTIALS_SECRET: "secret"
-
-# ##   volumes:
-#      - ./scripts/wait-for-it.sh:/app/wait-for-it.sh
-#    entrypoint: ["/app/wait-for-it.sh", "sqlserver", "1433", "8080", "--", "java", "-jar", "/app/quarkus-run.jar"]
-
-
-  #networks:
-#  investnet:
-#
-#services:
-#  db:
-#    image: mcr.microsoft.com/mssql/server:2022-latest
-#    container_name: sqlserver
-#    environment:
-#      SA_PASSWORD: "StrongPassword123"
-#      ACCEPT_EULA: "Y"
-#    ports:
-#      - "1433:1433"
-#    networks:
-#      - investnet
-#    healthcheck:
-#      test: [ "CMD", "/opt/mssql-tools/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "StrongPassword123", "-Q", "SELECT 1" ]
-#      interval: 10s
-#      timeout: 5s
-#      retries: 10
-#
-#  keycloak:
-#    image: quay.io/keycloak/keycloak:24.0.1
-#    container_name: simulacao-investimento-keycloak-1
-#    command:
-#      - start-dev
-#      - --import-realm
-#      - --health-enabled=true
-#      - --features=preview
-#    volumes:
-#      - ./realms:/opt/keycloak-data/import
-#    environment:
-#      KEYCLOAK_ADMIN: admin
-#      KEYCLOAK_ADMIN_PASSWORD: admin
-##      KC_HOSTNAME: keycloak    Estão habilitados na última versão
-##      KC_HOSTNAME_STRICT_BACKCHANNEL: false
-##      KC_HOSTNAME_STRICT: false
-#    ports:
-#      - "8180:8080"              # host:container
-#    networks:
-#      - investnet
-##    healthcheck:
-##      test: [ "CMD", "curl", "-f", "http://localhost:8180/realms/master" ]
-##      interval: 5s
-##      retries: 10
-#    healthcheck:
-#      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8080/health/ready"]
-#      interval: 10s
-#      timeout: 10s
-#      retries: 10
-#      start_period: 10s
-#
-#  api:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
-#    container_name: api
-#    depends_on:
-#      - sqlserver
-#      - keycloak
-#    environment:
-#      QUARKUS_DATASOURCE_USERNAME: sa
-#      QUARKUS_DATASOURCE_PASSWORD: StrongPass123!
-#      QUARKUS_DATASOURCE_JDBC_URL: "jdbc:sqlserver://sqlserver:1433;databaseName=investimentos;encrypt=false"
-#      QUARKUS_OIDC_AUTH_SERVER_URL: "http://keycloak:8080/realms/invest-api"
-#    ports:
-#      - "8081:8080"
-#    volumes:
-#      - ./scripts/wait-for-it.sh:/scripts/wait-for-it.sh
-#    entrypoint: ["sh", "/scripts/wait-for-it.sh", "sqlserver", "1433", "java", "-jar", "/work/quarkus-run.jar"]
-
-
-#  invest-api:
-#    build: .
-#    container_name: simulacao-investimento-api
-#    depends_on:
-#      keycloak:
-#        condition: service_healthy
-##        condition: service_started
-#      db:
-#        condition: service_healthy
-#        #condition: service_started
-#    ports:
-#      - "8080:8080"
-#    environment:
-#
-#      # ============================
-#      # OIDC (dentro do container!)
-#      # ============================
-#      QUARKUS_OIDC_AUTH_SERVER_URL: http://keycloak:8080/realms/invest-api
-#      QUARKUS_OIDC_CLIENT_ID: api-client
-#      QUARKUS_OIDC_CREDENTIALS_SECRET: secret
-#
-#      # ============================
-#      # Database (dentro do container!)
-#      # ============================
-#      QUARKUS_DATASOURCE_DB_KIND: mssql
-#      QUARKUS_DATASOURCE_JDBC_URL: jdbc:sqlserver://db:1433;databaseName=investimentos;encrypt=false;trustServerCertificate=true
-#      QUARKUS_DATASOURCE_USERNAME: sa
-#      QUARKUS_DATASOURCE_PASSWORD: StrongPassword123
-#      QUARKUS_HIBERNATE_ORM_DIALECT: org.hibernate.dialect.SQLServerDialect
-#      QUARKUS_HIBERNATE_ORM_DATABASE_GENERATION: update
-#
-#      QUARKUS_DATASOURCE_JDBC_DRIVER: com.microsoft.sqlserver.jdbc.SQLServerDriver
-#
-#    networks:
-#      - investnet
-#    volumes:
-#      - ./scripts/wait-for-it.ps1:/scripts/wait-for-it.ps1
-#      - ./run-api.ps1:/deploy/run-api.ps1
-#
-#    #entrypoint: ["keycloak", "8080", "--", "java", "-jar", "/app/quarkus-run.jar"]
-#    entrypoint:
-#      [
-#        "powershell",
-#        "-File",
-#        "C:\\scripts\\wait-for-it.ps1",
-#        "-Host", "sqlserver",
-#        "-Port", "1433",
-#        "-Timeout", "60",
-#        "-Command", "C:\\deploy\\run-api.ps1"
-#      ]
-#
-#  mssql-init:
-#    image: mcr.microsoft.com/mssql-tools
-#    container_name: sqlserver-init
-#    depends_on:
-#      db:
-#        condition: service_healthy
-#    networks:
-#      - investnet
-#    entrypoint: /bin/bash -c "
-#      echo 'Aguardando SQL Server ficar pronto...';
-#      until /opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa -P StrongPassword123 -Q 'SELECT 1' >/dev/null 2>&1; do
-#      echo 'SQL Server ainda não está pronto, tentando novamente...';
-#      sleep 2;
-#      done;
-#      echo 'Criando banco investimentos (se não existir)...';
-#      /opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa -P StrongPassword123 -Q \"IF DB_ID('investimentos') IS NULL CREATE DATABASE investimentos;\";
-#      echo 'Banco investimentos pronto!';"
-#
-
-
-#services:
-#  db:
-#    image: mcrnetworks:
-#  investnet:
-#
-#services:
-#  db:
-#    image: mcr.microsoft.com/mssql/server:2022-latest
-#    container_name: sqlserver
-#    environment:
-#      SA_PASSWORD: "StrongPassword123"
-#      ACCEPT_EULA: "Y"
-#      ports: - "1433:1433"
-#      networks:
-#        - investnet
-#      healthcheck:
-#        test: [ "CMD", "/opt/mssql-tools/bin/sqlcmd", "-S", "localhost", -U", "sa", "-P", "StrongPassword123", "-Q", "SELECT 1" ]
-#          interval: 10s
-#          timeout: 5s
-#          retries: 10
-#      keycloak:
-#        image: quay.io/keycloak/keycloak:24.0.1
-#        container_name: simulacao-investimento-keycloak-1
-#        command:
-#          - start-dev
-#            --import-realm
-#          - --health-enabled=true
-#          - --features=preview
-#        volumes: - ./realms:/opt/keycloak/data/import
-#        environment:
-#          KEYCLOAK_ADMIN: admin
-#          KEYCLOAK_ADMIN_PASSWORD: admin
-#          ports: - "8180:8080"
-#          networks:
-#            .microsoft.com/mssql/server:2022-latest
-#    container_name: sqlserver
-#    environment:
-#      SA_PASSWORD: "StrongPassword123"
-#      ACCEPT_EULA: "Y"
-#    ports:
-#      - "1433:1433"
-#    networks:
-#      - investnet
-#    healthcheck:
-#      test: [ "CMD", "/opt/mssql-tools/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "StrongPassword123", "-Q", "SELECT 1" ]
-#      interval: 10s
-#      timeout: 5s
-#      retries: 10
-#
-#  keycloak:
-#    image: quay.io/keycloak/keycloak:24.0.1
-#    container_name: simulacao-investimento-keycloak-1
-#    command:
-#      - start-dev
-#      - --import-realm
-#      - --health-enabled=true
-#      - --features=preview
-#    volumes:
-#      - ./realms:/opt/keycloak/data/import
-#    environment:
-#      KEYCLOAK_ADMIN: admin
-#      KEYCLOAK_ADMIN_PASSWORD: admin
-#      KC_HOSTNAME: localhost
-#      KC_HOSTNAME_STRICT_BACKCHANNEL: false
-#      KC_HOSTNAME_STRICT: false
-#    ports:
-#      - "8180:8080"
-#    networks:
-#      - investnet
-#    healthcheck:
-#      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8080/health/ready"]
-#      interval: 5s
-#      timeout: 5s
-#      retries: 20
-#      start_period: 10s
-#
-#  invest-api:
-#    build: .
-#    container_name: simulacao-investimento-api
-#    depends_on:
-#      keycloak:
-#        condition: service_healthy
-#      db:
-#        condition: service_healthy
-#    ports:
-#      - "8080:8080"
-#    environment:
-#      QUARKUS_DATASOURCE_JDBC_URL: jdbc:sqlserver://db:1433;databaseName=investimentos;encrypt=false;trustServerCertificate=true
-#      QUARKUS_DATASOURCE_USERNAME: sa
-#      QUARKUS_DATASOURCE_PASSWORD: StrongPassword123
-#      QUARKUS_DATASOURCE_DB_KIND: mssql
-#      QUARKUS_DATASOURCE_JDBC_DRIVER: com.microsoft.sqlserver.jdbc.SQLServerDriver
-#      QUARKUS_HIBERNATE_ORM_DIALECT: org.hibernate.dialect.SQLServerDialect
-#      QUARKUS_HIBERNATE_ORM_DATABASE_GENERATION: update
-#      QUARKUS_OIDC_AUTH_SERVER_URL: http://keycloak:8080/realms/invest-api
-#      QUARKUS_OIDC_CLIENT_ID: api-client
-#      QUARKUS_OIDC_CREDENTIALS_SECRET: secret
-#    networks:
-#      - investnet
-#
-#  mssql-init:
-#    image: mcr.microsoft.com/mssql-tools
-#    container_name: sqlserver-init
-#    depends_on:
-#      db:
-#        condition: service_healthy
-#    networks:
-#      - investnet
-#    entrypoint: /bin/bash -c "
-#      echo 'Aguardando SQL Server ficar pronto...';
-#      until /opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa -P StrongPassword123 -Q 'SELECT 1' >/dev/null 2>&1; do
-#      echo 'SQL Server ainda não está pronto, tentando novamente...';
-#      sleep 2;
-#      done;
-#      echo 'Criando banco investimentos (se não existir)...';
-#      /opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa -P StrongPassword123 -Q \"IF DB_ID('investimentos') IS NULL CREATE DATABASE investimentos;\";
-#      echo 'Banco investimentos pronto!';"

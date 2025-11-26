@@ -10,13 +10,12 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
+import java.util.List;
 import java.util.Optional;
 
 @Path("/perfil-risco")
-@SecurityRequirement(name = "SecurityScheme")
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "Perfil de Risco")
 public class PerfilRiscoController {
@@ -26,7 +25,7 @@ public class PerfilRiscoController {
 
     @GET
     @Path("/{clienteId}")
-    @RolesAllowed("user")
+    @RolesAllowed({"admin","user"})
     public Response obterPerfil(@PathParam("clienteId") Long clienteId) {
         if (clienteId == null || clienteId <= 0) {
             return Response.status(Response.Status.BAD_REQUEST)
@@ -34,11 +33,12 @@ public class PerfilRiscoController {
                     .build();
         }
         try {
-            Optional<PerfilRiscoDTO> resultado = perfilRiscoService.calcularPerfil(clienteId);
-
-            return resultado.map(r ->Response.ok(r).build())
+            return Optional.ofNullable(perfilRiscoService.calcularPerfil(clienteId))
+                    .filter(list -> !list.isEmpty())
+                    .map(Response::ok)
+                    .map(Response.ResponseBuilder::build)
                     .orElseGet(() -> Response.status(Response.Status.NOT_FOUND)
-                            .entity("Perfil de risco não encontrado para o cliente informado.")
+                            .entity("Perfil de risco não encontrado para o cliente ID " + clienteId)
                             .build());
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -46,6 +46,4 @@ public class PerfilRiscoController {
                     .build();
         }
     }
-
-
 }

@@ -10,7 +10,7 @@ public class Investimento {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column( name = "cliente_id", nullable = false)
+    @Column(nullable = false)
     private Long clienteId;
 
     @Column(nullable = false)

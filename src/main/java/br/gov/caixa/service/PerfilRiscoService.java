@@ -24,10 +24,8 @@ public class PerfilRiscoService {
     ClienteRepository clienteRepository;
 
     public Optional<PerfilRiscoDTO> calcularPerfil(Long clienteId){
-
         Cliente cliente = clienteRepository.findByOptional(clienteId)
                 .orElseThrow(()-> new WebApplicationException("Cliente não encontrado", 404 ));
-
         List<Investimento> historico = investimentoRepository.findByCliente(clienteId);
         if (historico.isEmpty()){
             return Optional.of(new PerfilRiscoDTO(clienteId, "Conservador",
