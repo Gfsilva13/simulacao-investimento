@@ -1,7 +1,6 @@
 # 📘 API Simulação de Investimento
 
-API desenvolvida em **Quarkus** para simulação de investimentos, utilizando **SQL Server** como banco de dados e **Keycloak** para autenticação via OIDC.  
-Inclui documentação interativa via **Swagger UI**.
+API desenvolvida em **Quarkus** para simulação de investimentos, utilizando **SQL Server** como banco de dados e **Keycloak** para autenticação via OIDC. Inclui documentação interativa via **Swagger UI**.
 
 ![Java](https://img.shields.io/badge/Java-21-blue?logo=java)  
 ![Quarkus](https://img.shields.io/badge/Quarkus-3.29.3-red?logo=quarkus)  
