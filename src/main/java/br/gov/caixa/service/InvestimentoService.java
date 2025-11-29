@@ -14,8 +14,8 @@ public class InvestimentoService {
     @Inject
     InvestimentoRepository investimentoRepository;
 
-    public List<InvestimentoDTO> listarPorCliente (Long clienteID){
-        return investimentoRepository.findByCliente(clienteID).stream()
+    public List<InvestimentoDTO> listarPorCliente (Long clienteId){
+        return investimentoRepository.findByCliente(clienteId).stream()
                 .map(InvestimentoDTO:: fromEntity)
                 .collect(Collectors.toList());
     }

@@ -14,7 +14,7 @@ public class Simulacao {
     private Long clienteId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "produto_id", insertable = false, updatable = false)
+    @JoinColumn(name = "produto", insertable = false, updatable = false)
     private ProdutoInvestimento produto;
 
     @Column( name = "produto_id", nullable = false)

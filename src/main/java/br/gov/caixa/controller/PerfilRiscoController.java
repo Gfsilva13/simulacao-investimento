@@ -1,6 +1,5 @@
 package br.gov.caixa.controller;
 
-import br.gov.caixa.dto.PerfilRiscoDTO;
 import br.gov.caixa.service.PerfilRiscoService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -12,10 +11,9 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
-import java.util.List;
 import java.util.Optional;
 
-@Path("/perfil-risco")
+@Path("/perfil-risco-cliente")
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "Perfil de Risco")
 public class PerfilRiscoController {

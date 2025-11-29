@@ -13,9 +13,9 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import java.util.Optional;
 
-@Path("/investimentos")
+@Path("/investimento-cliente")
 @Produces(MediaType.APPLICATION_JSON)
-@Tag(name = "Investimentos")
+@Tag(name = "Investimentos Financeiros")
 public class InvestimentoController {
 
     @Inject
@@ -25,6 +25,7 @@ public class InvestimentoController {
     @Path("/{clienteId}")
     @RolesAllowed({"admin", "user"})
     public Response listar(@PathParam("clienteId") Long clienteId){
+        System.out.println("CLIENTE ID: "+clienteId);
         if (clienteId == null || clienteId <= 0) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("O ID do cliente deve ser um número positivo.")

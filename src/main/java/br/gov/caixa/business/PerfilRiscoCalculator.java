@@ -1,9 +1,11 @@
 package br.gov.caixa.business;
 
 import br.gov.caixa.entity.Investimento;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.List;
 
+@ApplicationScoped
 public class PerfilRiscoCalculator {
 
     public static int calcularPontuacao(List<Investimento> historico) {
