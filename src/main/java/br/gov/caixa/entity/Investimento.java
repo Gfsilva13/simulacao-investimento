@@ -10,11 +10,13 @@ public class Investimento {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "cliente_Id", nullable = false)
-    private Long clienteId;
+    @ManyToOne
+    @JoinColumn(name = "clienteId", nullable = false)
+    private Cliente cliente;
 
-    @Column(nullable = false)
-    private String tipo;
+    @ManyToOne
+    @JoinColumn(name="produtoId", nullable = false)
+    private ProdutoInvestimento produtoInvestimento;
 
     @Column(nullable = false)
     private Double valor;
@@ -34,22 +36,6 @@ public class Investimento {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getClienteId() {
-        return clienteId;
-    }
-
-    public void setClienteId(Long clienteId) {
-        this.clienteId = clienteId;
-    }
-
-    public String getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
     }
 
     public Double getValor() {
@@ -82,5 +68,21 @@ public class Investimento {
 
     public void setPrazoMeses(int prazoMeses) {
         this.prazoMeses = prazoMeses;
+    }
+
+    public ProdutoInvestimento getProdutoInvestimento() {
+        return produtoInvestimento;
+    }
+
+    public void setProdutoInvestimento(ProdutoInvestimento produtoInvestimento) {
+        this.produtoInvestimento = produtoInvestimento;
+    }
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
     }
 }

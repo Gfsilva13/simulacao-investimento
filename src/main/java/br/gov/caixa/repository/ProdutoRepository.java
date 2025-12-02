@@ -10,17 +10,8 @@ import java.util.Optional;
 @ApplicationScoped
 public class ProdutoRepository implements PanacheRepository<ProdutoInvestimento> {
 
-    public Optional<ProdutoInvestimento> findByTipoAndRisco(String tipo, String riscoAceito){
-        return find("tipo = ?1 and risco = ?2",
-                    tipo, riscoAceito).firstResultOptional();
-    }
-
-    public List<ProdutoInvestimento> findByRisco(String risco){
-          return find("risco = ?1", risco).list();
-    }
-
-    public List<ProdutoInvestimento> listAllOrderedByRentabilidadeDesc(){
-        return find("ORDER BY rentabilidade DESC").list();
+    public Optional<ProdutoInvestimento> findByTipo(String tipo){
+                return find("tipoProduto = ?1",tipo).firstResultOptional();
     }
 
     public List<ProdutoInvestimento> findByPerfil(String perfilRisco){
@@ -30,5 +21,13 @@ public class ProdutoRepository implements PanacheRepository<ProdutoInvestimento>
              case "Agressivo" -> list("risco in (?1, ?2)", "Médio", "Alto");
             default -> List.of();
         };
+    }
+
+    public List<ProdutoInvestimento> listAllOrderedByRentabilidadeDesc(){
+        return find("ORDER BY rentabilidade DESC").list();
+    }
+
+    public List<ProdutoInvestimento> findByRisco(String risco){
+        return find("risco = ?1", risco).list();
     }
 }

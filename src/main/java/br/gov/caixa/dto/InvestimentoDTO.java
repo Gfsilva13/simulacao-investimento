@@ -15,7 +15,7 @@ public class InvestimentoDTO {
     public static InvestimentoDTO fromEntity(Investimento investimento) {
         InvestimentoDTO dto = new InvestimentoDTO();
         dto.id = investimento.getId();
-        dto.tipo = investimento.getTipo();
+        dto.tipo = investimento.getProdutoInvestimento().getTipoProduto();
         dto.valor = investimento.getValor();
         dto.rentabilidade = investimento.getRentabilidade();
         dto.data = investimento.getData();

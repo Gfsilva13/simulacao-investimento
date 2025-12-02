@@ -13,11 +13,11 @@ public class SimulacaoHistoricoDTO {
     public Integer prazoMeses;
     public LocalDateTime dataSimulacao;
 
-    public static SimulacaoHistoricoDTO fromEntity(Simulacao simulacao, String nomeProduto) {
+    public static SimulacaoHistoricoDTO fromEntity(Simulacao simulacao) {
         SimulacaoHistoricoDTO dto = new SimulacaoHistoricoDTO();
         dto.id = simulacao.getId();
-        dto.clienteId = simulacao.getClienteId();
-        dto.produto = nomeProduto;
+        dto.clienteId = simulacao.getCliente().getId();
+        dto.produto = simulacao.getProduto().getNomeProduto();
         dto.valorInvestido = simulacao.getValorInvestido();
         dto.valorFinal = simulacao.getValorFinal();
         dto.prazoMeses = simulacao.getPrazoMeses();

@@ -19,13 +19,13 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 public class TelemetriaController {
 
-    @Inject
-    TelemetriaService telemetriaService;
-
-    @GET
-    @RolesAllowed("admin")
-    public Response obterResumo(@Valid @BeanParam TelemetriaFiltroRequest filtro){
-        TelemetriaDTO resultado = telemetriaService.gerarResumo(filtro.dias);
-        return Response.ok(resultado).build();
-    }
+//    @Inject
+//    TelemetriaService telemetriaService;
+//
+//    @GET
+//    @RolesAllowed("admin")
+//    public Response obterResumo(@Valid @BeanParam TelemetriaFiltroRequest filtro){
+//        TelemetriaDTO resultado = telemetriaService.gerarResumo(filtro.dias);
+//        return Response.ok(resultado).build();
+//    }
 }

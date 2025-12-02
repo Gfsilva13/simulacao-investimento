@@ -22,25 +22,25 @@ public class PerfilRiscoController {
     PerfilRiscoService perfilRiscoService;
 
     @GET
-    @Path("/{clienteId}")
+    @Path("/{id}")
     @RolesAllowed({"admin","user"})
-    public Response obterPerfil(@PathParam("clienteId") Long clienteId) {
-        if (clienteId == null || clienteId <= 0) {
+    public Response obterPerfil(@PathParam("id") Long id) {
+        if (id == null || id <= 0) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("O ID do cliente deve ser um número positivo.")
                     .build();
         }
         try {
-            return Optional.ofNullable(perfilRiscoService.calcularPerfil(clienteId))
+            return Optional.ofNullable(perfilRiscoService.calcularPerfil(id))
                     .filter(list -> !list.isEmpty())
                     .map(Response::ok)
                     .map(Response.ResponseBuilder::build)
                     .orElseGet(() -> Response.status(Response.Status.NOT_FOUND)
-                            .entity("Perfil de risco não encontrado para o cliente ID " + clienteId)
+                            .entity("Perfil de risco não encontrado para o cliente ID " + id)
                             .build());
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("Erro ao calcular perfil de risco: " + e.getMessage())
+                    .entity("Erro ao calcular perfil de risco para o cliente. " + e.getMessage())
                     .build();
         }
     }

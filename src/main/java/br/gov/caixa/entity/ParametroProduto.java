@@ -11,9 +11,6 @@ public class ParametroProduto {
     private Long id;
 
     @Column(nullable = false)
-    private String tipoProduto;
-
-    @Column(nullable = false)
     private Double minValor;
 
     @Column(nullable = false)
@@ -30,15 +27,7 @@ public class ParametroProduto {
         this.id = id;
     }
 
-    public String getTipo() {
-        return tipoProduto;
-    }
-
-    public void setTipo(String tipoProduto) {
-        this.tipoProduto = tipoProduto;
-    }
-
-    public Double getMinValor() {
+   public Double getMinValor() {
         return minValor;
     }
 

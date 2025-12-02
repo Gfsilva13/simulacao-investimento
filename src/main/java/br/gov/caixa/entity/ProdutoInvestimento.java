@@ -11,7 +11,7 @@ public class ProdutoInvestimento {
     private Long id;
 
     @Column(nullable = false)
-    private String nome;
+    private String nomeProduto;
 
     @Column(nullable = false)
     private String tipoProduto;
@@ -19,8 +19,9 @@ public class ProdutoInvestimento {
     @Column(nullable = false)
     private Double rentabilidade;
 
-    @Column(nullable = false)
-    private String risco;
+    @ManyToOne
+    @JoinColumn(name ="parametroId", nullable = false)
+    private ParametroProduto parametroProduto;
 
     public Long getId() {
         return id;
@@ -30,12 +31,12 @@ public class ProdutoInvestimento {
         this.id = id;
     }
 
-    public String getNome() {
-        return nome;
+    public String getNomeProduto() {
+        return nomeProduto;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setNomeProduto(String nomeProduto) {
+        this.nomeProduto = nomeProduto;
     }
 
     public String getTipoProduto() {
@@ -54,11 +55,11 @@ public class ProdutoInvestimento {
         this.rentabilidade = rentabilidade;
     }
 
-    public String getRisco() {
-        return risco;
+    public ParametroProduto getParametroProduto() {
+        return parametroProduto;
     }
 
-    public void setRisco(String risco) {
-        this.risco = risco;
+    public void setParametroProduto(ParametroProduto parametroProduto) {
+        this.parametroProduto = parametroProduto;
     }
 }

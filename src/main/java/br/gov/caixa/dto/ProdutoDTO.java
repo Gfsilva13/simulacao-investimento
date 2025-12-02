@@ -24,10 +24,10 @@ public class ProdutoDTO {
     public static ProdutoDTO fromEntity(ProdutoInvestimento produto) {
         ProdutoDTO dto = new ProdutoDTO();
         dto.id = produto.getId();
-        dto.nome = produto.getNome();
+        dto.nome = produto.getNomeProduto();
         dto.tipo = produto.getTipoProduto();
         dto.rentabilidade = produto.getRentabilidade();
-        dto.risco = produto.getRisco();
+        dto.risco = produto.getParametroProduto().getRiscoAceito();
         return dto;
     }
 

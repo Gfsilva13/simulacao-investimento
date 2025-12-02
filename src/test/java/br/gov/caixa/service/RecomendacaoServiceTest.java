@@ -35,15 +35,15 @@ public class RecomendacaoServiceTest {
 
         ProdutoInvestimento produto1 = new ProdutoInvestimento();
         produto1.setId(1L);
-        produto1.setNome("CDB Moderado");
+        produto1.setNomeProduto("CDB Moderado");
         produto1.setTipoProduto("CDB");
-        produto1.setRisco("Moderado");
+        //produto1.setRisco("Moderado");
 
         ProdutoInvestimento produto2 = new ProdutoInvestimento();
         produto2.setId(2L);
-        produto2.setNome("LCI Moderado");
+        produto2.setNomeProduto("LCI Moderado");
         produto2.setTipoProduto("LCI");
-        produto2.setRisco("Moderado");
+        //produto2.setRisco("Moderado");
 
         when(produtoRepository.findByPerfil(perfil)).thenReturn(List.of(produto1, produto2));
 
@@ -66,15 +66,15 @@ public class RecomendacaoServiceTest {
 
         ProdutoInvestimento produto1 = new ProdutoInvestimento();
         produto1.setId(1L);
-        produto1.setNome("CDB Moderado");
+        produto1.setNomeProduto("CDB Moderado");
         produto1.setTipoProduto("CDB");
-        produto1.setRisco("Moderado");
+        //produto1.setRisco("Moderado");
 
         ProdutoInvestimento produto2 = new ProdutoInvestimento();
         produto2.setId(2L);
-        produto2.setNome("LCI Moderado");
+        produto2.setNomeProduto("LCI Moderado");
         produto2.setTipoProduto("LCI");
-        produto2.setRisco("Moderado");
+        //produto2.setRisco("Moderado");
 
         when(perfilRiscoService.calcularPerfil(clienteId)).thenReturn(Optional.of(perfil));
         when(produtoRepository.findByPerfil("Moderado")).thenReturn(List.of(produto1, produto2));

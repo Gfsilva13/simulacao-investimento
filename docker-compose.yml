@@ -31,7 +31,10 @@ services:
     restart: unless-stopped
 
   api:
-    image: simulacao-investimento-api:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    #image: simulacao-investimento-api:latest
     container_name: api
     depends_on:
        keycloak:
@@ -42,8 +45,14 @@ services:
        QUARKUS_DATASOURCE_USERNAME: sa
        QUARKUS_DATASOURCE_PASSWORD: Senhaforte123456
        QUARKUS_DATASOURCE_JDBC_URL: jdbc:sqlserver://sqlserver:1433;databaseName=investimentos;encrypt=true;trustServerCertificate=true
+       #QUARKUS_OIDC_AUTH_SERVER_URL: "http://keycloak:8180/realms/invest-api"
     ports:
       - "8081:8080"
+    volumes:
+      - ./src:/project/src
+      - ./pom.xml:/project/pom.xml
+    #command: ./mvnw quarkus:dev -Dquarkus.http.host=0.0.0.0
     restart: unless-stopped
+
 volumes:
   sqlserver-data:

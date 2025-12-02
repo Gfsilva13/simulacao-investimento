@@ -2,11 +2,16 @@ package br.gov.caixa.business;
 
 import br.gov.caixa.dto.SimulacaoRequest;
 import br.gov.caixa.entity.ParametroProduto;
+import br.gov.caixa.entity.ProdutoInvestimento;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.WebApplicationException;
 
+import java.util.Optional;
+
+@ApplicationScoped
 public class SimulacaoValidator {
 
-    private SimulacaoValidator() {}
+    public SimulacaoValidator() {}
 
     public static void validar(SimulacaoRequest request, ParametroProduto parametro) {
         if (request.valor < parametro.getMinValor()) {

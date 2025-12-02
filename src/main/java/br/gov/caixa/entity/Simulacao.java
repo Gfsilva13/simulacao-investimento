@@ -10,15 +10,13 @@ public class Simulacao {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Long clienteId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "clienteId", nullable = false)
+    private Cliente cliente;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "produto", insertable = false, updatable = false)
+    @JoinColumn(name = "produtoId", nullable = false)
     private ProdutoInvestimento produto;
-
-    @Column( name = "produto_id", nullable = false)
-    private Long produtoId;
 
     @Column(nullable = false)
     private Double valorInvestido;
@@ -40,20 +38,12 @@ public class Simulacao {
         this.id = id;
     }
 
-    public Long getClienteId() {
-        return clienteId;
+    public Cliente getCliente() {
+        return cliente;
     }
 
-    public void setClienteId(Long clienteId) {
-        this.clienteId = clienteId;
-    }
-
-    public Long getProdutoId() {
-        return produtoId;
-    }
-
-    public void setProdutoId(Long produtoId) {
-        this.produtoId = produtoId;
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
     }
 
     public Double getValorInvestido() {

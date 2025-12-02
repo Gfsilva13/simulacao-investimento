@@ -12,9 +12,9 @@ import java.util.List;
 public class SimulacaoRepository implements PanacheRepository<Simulacao> {
 
     public List<Simulacao> findByCliente(Long clienteId) {
+
         return list("clienteId", clienteId);
     }
-
     public List<Simulacao> findByProdutoAndDate(String produtoNome, LocalDate data) {
         return find("produto.nome = ?1 and date(dataSimulacao) = ?2", produtoNome, data).list();
     }

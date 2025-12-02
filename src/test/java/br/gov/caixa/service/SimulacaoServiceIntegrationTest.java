@@ -38,7 +38,7 @@ public class SimulacaoServiceIntegrationTest {
     @BeforeEach
     void setup() {
         ParametroProduto parametro = new ParametroProduto();
-        parametro.setTipo("CDB");
+        //parametro.setTipo("CDB");
         parametro.setMinValor(1000.0);
         parametro.setMaxPrazo(24);
         parametro.setRiscoAceito("Baixo");
@@ -47,8 +47,8 @@ public class SimulacaoServiceIntegrationTest {
         ProdutoInvestimento produto = new ProdutoInvestimento();
         produto.setTipoProduto("CDB");
         produto.setRentabilidade(0.12);
-        produto.setRisco("Baixo");
-        produto.setNome("CDB Real");
+        //produto.setRisco("Baixo");
+        produto.setNomeProduto("CDB Real");
         produtoRepository.persist(produto);
     }
 
