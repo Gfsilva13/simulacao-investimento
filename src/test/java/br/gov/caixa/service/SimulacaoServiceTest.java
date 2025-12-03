@@ -1,20 +1,19 @@
 package br.gov.caixa.service;
 
-import br.gov.caixa.dto.SimulacaoRequest;
-import br.gov.caixa.dto.SimulacaoResponse;
-import br.gov.caixa.entity.ParametroProduto;
-import br.gov.caixa.entity.ProdutoInvestimento;
-import br.gov.caixa.repository.ParametroProdutoRepository;
-import br.gov.caixa.repository.ProdutoRepository;
-import br.gov.caixa.repository.SimulacaoRepository;
+import br.gov.caixa.dto.simulacao.SimulacaoRequest;
+import br.gov.caixa.dto.simulacao.SimulacaoResponse;
+import br.gov.caixa.entity.business.ParametroProduto;
+import br.gov.caixa.entity.business.ProdutoInvestimento;
+import br.gov.caixa.repository.business.ParametroProdutoRepository;
+import br.gov.caixa.repository.business.ProdutoRepository;
+import br.gov.caixa.repository.simulacao.SimulacaoRepository;
+import br.gov.caixa.service.simulacao.SimulacaoService;
 import jakarta.ws.rs.WebApplicationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -36,7 +35,7 @@ public class SimulacaoServiceTest {
     SimulacaoRepository simulacaoRepository;
 
     @Test
-    void deveSimularInvestimentoComProdutoValido() {
+    void deveSimularInvestimentoInvestimentoComProdutoValido() {
         ParametroProduto parametro = new ParametroProduto();
         //parametro.setTipo("CDB");
         parametro.setMinValor(1000.0);
@@ -60,7 +59,7 @@ public class SimulacaoServiceTest {
         request.prazoMeses = 12;
         request.tipoProduto = "CDB";
 
-        SimulacaoResponse response = simulacaoService.simular(request);
+        SimulacaoResponse response = simulacaoService.simularInvestimento(request);
 
         //assertEquals(11200.0, response.resultadoSimulacao.valorFinal, 0.01);
         assertEquals("CDB Caixa 2026", response.produtoValidado.nome);
@@ -74,7 +73,7 @@ public class SimulacaoServiceTest {
         when(parametroProdutoRepository.findByTipo("LCI")).thenReturn(null);
 
         WebApplicationException ex = assertThrows(WebApplicationException.class, () -> {
-            simulacaoService.simular(request);
+            simulacaoService.simularInvestimento(request);
         });
 
         assertEquals(400, ex.getResponse().getStatus());
@@ -97,7 +96,7 @@ public class SimulacaoServiceTest {
         request.prazoMeses = 12;
 
         WebApplicationException ex = assertThrows(WebApplicationException.class, () -> {
-            simulacaoService.simular(request);
+            simulacaoService.simularInvestimento(request);
         });
 
         assertEquals(404, ex.getResponse().getStatus());
@@ -119,7 +118,7 @@ public class SimulacaoServiceTest {
         request.prazoMeses = 12;
 
         WebApplicationException ex = assertThrows(WebApplicationException.class, () -> {
-            simulacaoService.simular(request);
+            simulacaoService.simularInvestimento(request);
         });
 
         assertEquals(422, ex.getResponse().getStatus());
@@ -141,7 +140,7 @@ public class SimulacaoServiceTest {
         request.prazoMeses = 24;
 
         WebApplicationException ex = assertThrows(WebApplicationException.class, () -> {
-            simulacaoService.simular(request);
+            simulacaoService.simularInvestimento(request);
         });
 
         assertEquals(422, ex.getResponse().getStatus());

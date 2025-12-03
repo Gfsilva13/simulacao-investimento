@@ -1,6 +1,6 @@
 package br.gov.caixa.controller;
 
-import br.gov.caixa.dto.ProdutoDTO;
+import br.gov.caixa.dto.business.ProdutoDTO;
 import br.gov.caixa.service.RecomendacaoService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;

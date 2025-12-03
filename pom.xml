@@ -97,7 +97,13 @@
             <artifactId>quarkus-arc</artifactId>
         </dependency>
 
-        <!-- Testes -->
+        <!-- Micrometer/Prometheus -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-micrometer-registry-prometheus</artifactId>
+        </dependency>
+
+       <!-- Testes -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>

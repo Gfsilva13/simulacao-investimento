@@ -1,6 +1,6 @@
 package br.gov.caixa.service;
 
-import br.gov.caixa.dto.SimulacaoRequest;
+import br.gov.caixa.dto.simulacao.SimulacaoRequest;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;

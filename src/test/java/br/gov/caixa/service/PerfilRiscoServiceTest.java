@@ -1,10 +1,11 @@
 package br.gov.caixa.service;
 
-import br.gov.caixa.dto.PerfilRiscoDTO;
-import br.gov.caixa.entity.Cliente;
-import br.gov.caixa.entity.Investimento;
-import br.gov.caixa.repository.ClienteRepository;
-import br.gov.caixa.repository.InvestimentoRepository;
+import br.gov.caixa.dto.business.PerfilRiscoDTO;
+import br.gov.caixa.entity.business.Cliente;
+import br.gov.caixa.entity.business.Investimento;
+import br.gov.caixa.repository.business.ClienteRepository;
+import br.gov.caixa.repository.business.InvestimentoRepository;
+import br.gov.caixa.service.business.PerfilRiscoService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -42,7 +43,7 @@ public class PerfilRiscoServiceTest {
     }
 
     @Test
-    void deveCalcularPerfilModeradoComHistoricoMedio() {
+    void devePerfilRiscoModeradoComHistoricoMedio() {
         Long clienteId = 1L;
 
         List<Investimento> historico = List.of(
@@ -54,7 +55,7 @@ public class PerfilRiscoServiceTest {
         when(clienteRepository.findByOptional(clienteId)).thenReturn(Optional.of(new Cliente()));
         when(investimentoRepository.findByCliente(clienteId)).thenReturn(historico);
 
-        PerfilRiscoDTO perfil = perfilRiscoService.calcularPerfil(clienteId).orElseThrow();
+        PerfilRiscoDTO perfil = perfilRiscoService.perfilRisco(clienteId).orElseThrow();
 
         assertEquals(clienteId, perfil.clienteId);
         assertEquals("Moderado", perfil.perfil);
@@ -75,7 +76,7 @@ public class PerfilRiscoServiceTest {
         when(clienteRepository.findByOptional(clienteId)).thenReturn(Optional.of(new Cliente()));
         when(investimentoRepository.findByCliente(clienteId)).thenReturn(historico);
 
-        PerfilRiscoDTO perfil = perfilRiscoService.calcularPerfil(clienteId).orElseThrow();
+        PerfilRiscoDTO perfil = perfilRiscoService.perfilRisco(clienteId).orElseThrow();
 
         assertEquals("Conservador", perfil.perfil);
         assertTrue(perfil.pontuacao < 40);
@@ -94,7 +95,7 @@ public class PerfilRiscoServiceTest {
         when(clienteRepository.findByOptional(clienteId)).thenReturn(Optional.of(new Cliente()));
         when(investimentoRepository.findByCliente(clienteId)).thenReturn(historico);
 
-        PerfilRiscoDTO perfil = perfilRiscoService.calcularPerfil(clienteId).orElseThrow();
+        PerfilRiscoDTO perfil = perfilRiscoService.perfilRisco(clienteId).orElseThrow();
         System.out.println("Pontuação calculada: " + perfil.pontuacao);
         assertEquals("Agressivo", perfil.perfil);
         assertTrue(perfil.pontuacao >= 70);
@@ -107,7 +108,7 @@ public class PerfilRiscoServiceTest {
         when(clienteRepository.findByOptional(clienteId)).thenReturn(Optional.of(new Cliente()));
         when(investimentoRepository.findByCliente(clienteId)).thenReturn(Collections.emptyList());
 
-        PerfilRiscoDTO perfil = perfilRiscoService.calcularPerfil(clienteId).orElseThrow();
+        PerfilRiscoDTO perfil = perfilRiscoService.perfilRisco(clienteId).orElseThrow();
 
         assertEquals("Conservador", perfil.perfil);
         assertEquals(0, perfil.pontuacao);

@@ -1,9 +1,10 @@
 package br.gov.caixa.service;
 
-import br.gov.caixa.dto.PerfilRiscoDTO;
-import br.gov.caixa.dto.ProdutoDTO;
-import br.gov.caixa.entity.ProdutoInvestimento;
-import br.gov.caixa.repository.ProdutoRepository;
+import br.gov.caixa.dto.business.PerfilRiscoDTO;
+import br.gov.caixa.dto.business.ProdutoDTO;
+import br.gov.caixa.entity.business.ProdutoInvestimento;
+import br.gov.caixa.repository.business.ProdutoRepository;
+import br.gov.caixa.service.business.PerfilRiscoService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -76,7 +77,7 @@ public class RecomendacaoServiceTest {
         produto2.setTipoProduto("LCI");
         //produto2.setRisco("Moderado");
 
-        when(perfilRiscoService.calcularPerfil(clienteId)).thenReturn(Optional.of(perfil));
+        when(perfilRiscoService.perfilRisco(clienteId)).thenReturn(Optional.of(perfil));
         when(produtoRepository.findByPerfil("Moderado")).thenReturn(List.of(produto1, produto2));
 
         List<ProdutoDTO> recomendados = recomendacaoService.recomendarPorCliente(clienteId);

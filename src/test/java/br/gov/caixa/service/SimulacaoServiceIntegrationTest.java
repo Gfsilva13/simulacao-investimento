@@ -1,14 +1,15 @@
 package br.gov.caixa.service;
 
-import br.gov.caixa.dto.SimulacaoRequest;
-import br.gov.caixa.dto.SimulacaoResponse;
-import br.gov.caixa.entity.ParametroProduto;
-import br.gov.caixa.entity.ProdutoInvestimento;
-import br.gov.caixa.entity.Simulacao;
-import br.gov.caixa.repository.ParametroProdutoRepository;
-import br.gov.caixa.repository.ProdutoRepository;
-import br.gov.caixa.repository.SimulacaoRepository;
+import br.gov.caixa.dto.simulacao.SimulacaoRequest;
+import br.gov.caixa.dto.simulacao.SimulacaoResponse;
+import br.gov.caixa.entity.business.ParametroProduto;
+import br.gov.caixa.entity.business.ProdutoInvestimento;
+import br.gov.caixa.entity.simulacao.Simulacao;
+import br.gov.caixa.repository.business.ParametroProdutoRepository;
+import br.gov.caixa.repository.business.ProdutoRepository;
+import br.gov.caixa.repository.simulacao.SimulacaoRepository;
 
+import br.gov.caixa.service.simulacao.SimulacaoService;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.*;
@@ -60,7 +61,7 @@ public class SimulacaoServiceIntegrationTest {
         request.prazoMeses = 12;
         request.tipoProduto = "CDB";
 
-        SimulacaoResponse response = simulacaoService.simular(request);
+        SimulacaoResponse response = simulacaoService.simularInvestimento(request);
 
         List<Simulacao> simulacoes = simulacaoRepository.listAll();
         Assertions.assertEquals(1, simulacoes.size());
