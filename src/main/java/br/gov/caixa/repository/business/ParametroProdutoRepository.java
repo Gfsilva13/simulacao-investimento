@@ -7,7 +7,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class ParametroProdutoRepository implements PanacheRepository<ParametroProduto> {
 
-    public ParametroProduto findByTipo(String tipo){
-       return find("tipoProduto = ?1", tipo).firstResult();
+    public ParametroProduto findByRisco(String risco){
+       return find("riscoAceito = ?1", risco).firstResult();
     }
 }

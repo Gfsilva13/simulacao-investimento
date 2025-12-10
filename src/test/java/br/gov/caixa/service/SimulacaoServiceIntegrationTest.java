@@ -12,6 +12,8 @@ import br.gov.caixa.repository.simulacao.SimulacaoRepository;
 import br.gov.caixa.service.simulacao.SimulacaoService;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.security.TestSecurity;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.*;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -37,9 +39,9 @@ public class SimulacaoServiceIntegrationTest {
     SimulacaoRepository simulacaoRepository;
 
     @BeforeEach
+    @Transactional
     void setup() {
         ParametroProduto parametro = new ParametroProduto();
-        //parametro.setTipo("CDB");
         parametro.setMinValor(1000.0);
         parametro.setMaxPrazo(24);
         parametro.setRiscoAceito("Baixo");
@@ -48,12 +50,13 @@ public class SimulacaoServiceIntegrationTest {
         ProdutoInvestimento produto = new ProdutoInvestimento();
         produto.setTipoProduto("CDB");
         produto.setRentabilidade(0.12);
-        //produto.setRisco("Baixo");
         produto.setNomeProduto("CDB Real");
+        produto.setParametroProduto(parametro);
         produtoRepository.persist(produto);
     }
 
     @Test
+    @TestSecurity(user = "testUser", roles = {"user"})
     void deveExecutarSimulacaoComSQLServer() {
         SimulacaoRequest request = new SimulacaoRequest();
         request.clienteId = 99L;

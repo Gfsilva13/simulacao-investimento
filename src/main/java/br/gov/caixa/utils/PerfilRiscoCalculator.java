@@ -8,7 +8,10 @@ import java.util.List;
 @ApplicationScoped
 public class PerfilRiscoCalculator {
 
-    public static int calcularPontuacao(List<Investimento> historico) {
+    public int calcularPontuacao(List<Investimento> historico) {
+        if (historico == null || historico.isEmpty()) {
+            return 0;
+        }
         double volume = historico.stream().mapToDouble(Investimento::getValor).sum();
         int frequencia = historico.size();
         double prazoMedio = historico.stream()
@@ -23,13 +26,13 @@ public class PerfilRiscoCalculator {
         return Math.min(pVolume + pFreq + pPrazo, 100);
     }
 
-    public static String classificarPerfil(int pontuacao) {
+    public String classificarPerfil(int pontuacao) {
         if (pontuacao >= 70) return "Agressivo";
         if (pontuacao >= 40) return "Moderado";
         return "Conservador";
     }
 
-    public static String descreverPerfil(String perfil) {
+    public String descreverPerfil(String perfil) {
         return switch (perfil) {
             case "Agressivo" -> "Perfil voltado para alta rentabilidade com maior risco";
             case "Moderado" -> "Perfil equilibrado entre risco e retorno";

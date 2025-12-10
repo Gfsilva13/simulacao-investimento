@@ -14,11 +14,18 @@ public class ProdutoRepository implements PanacheRepository<ProdutoInvestimento>
                 return find("tipoProduto = ?1",tipo).firstResultOptional();
     }
 
-    public List<ProdutoInvestimento> findByPerfil(String perfilRisco){
-        return switch (perfilRisco){
-             case "Conservador" -> list("risco = ?1", "Baixo");
-             case "Moderado" -> list("risco in (?1, ?2", "Baixo", "Médio");
-             case "Agressivo" -> list("risco in (?1, ?2)", "Médio", "Alto");
+//    public List<ProdutoInvestimento> findByPerfil(String perfilRisco){
+//        return switch (perfilRisco){
+//             case "Conservador" -> list("riscoAceito = ?1", "Baixo");
+//             case "Moderado" -> list("riscoAceito in (?1, ?2", "Baixo", "Medio");
+//             case "Agressivo" -> list("riscoAceito in (?1, ?2)", "Medio", "Alto");
+//            default -> List.of();
+//        };
+    public List<ProdutoInvestimento> findByPerfil(String perfilRisco) {
+        return switch (perfilRisco) {
+            case "Conservador" -> list("parametroProduto.riscoAceito = ?1", "Baixo");
+            case "Moderado" -> list("parametroProduto.riscoAceito IN (?1, ?2)", "Baixo", "Medio");
+            case "Agressivo" -> list("parametroProduto.riscoAceito IN (?1, ?2)", "Medio", "Alto");
             default -> List.of();
         };
     }
@@ -28,6 +35,6 @@ public class ProdutoRepository implements PanacheRepository<ProdutoInvestimento>
     }
 
     public List<ProdutoInvestimento> findByRisco(String risco){
-        return find("risco = ?1", risco).list();
+        return find("parametroProduto.riscoAceito = ?1", risco).list();
     }
 }

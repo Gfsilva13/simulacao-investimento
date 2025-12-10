@@ -11,7 +11,7 @@ public class SqlServerTestResource implements QuarkusTestResourceLifecycleManage
     private MSSQLServerContainer<?> sqlServer;
 
     @Override
-    public Map<String, String> start(){
+    public Map<String, String> start() {
         sqlServer = new MSSQLServerContainer<>("mcr.microsoft.com/mssql/server:2022-latest")
                 .acceptLicense()
                 .withPassword("StrongPassword123!")
@@ -29,8 +29,8 @@ public class SqlServerTestResource implements QuarkusTestResourceLifecycleManage
     }
 
     @Override
-    public void stop(){
-        if (sqlServer != null){
+    public void stop() {
+        if (sqlServer != null) {
             sqlServer.stop();
         }
     }

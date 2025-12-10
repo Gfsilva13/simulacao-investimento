@@ -43,8 +43,9 @@ public class SimulacaoService {
         double valorFinal = simulacaoCalculator.calcularValorFinal(request.valor,
                                                produtoInvestimento.getRentabilidade(),
                                                request.prazoMeses);
-        Simulacao simulacao = registrarSimulacao(request, produtoInvestimento, valorFinal);
-        return montarResposta(produtoInvestimento, valorFinal, request.prazoMeses,simulacao.getDataSimulacao());
+        double valorArredondado = Math.round(valorFinal * 100.0) / 100.0;
+        Simulacao simulacao = registrarSimulacao(request, produtoInvestimento, valorArredondado);
+        return montarResposta(produtoInvestimento, valorArredondado, request.prazoMeses,simulacao.getDataSimulacao());
     }
 
     public List<SimulacaoHistoricoDTO> listarTodas() {
@@ -78,7 +79,7 @@ public class SimulacaoService {
 
     private ProdutoInvestimento buscarProdutoCompativel(String tipo) {
         return produtoRepository.findByTipo(tipo).
-        orElseThrow(() -> new WebApplicationException("Nenhum produto compatível encontrado: TIPO: "+
+        orElseThrow(() -> new WebApplicationException("Nenhum produto compatível encontrado: "+
                 tipo, 404));
     }
 

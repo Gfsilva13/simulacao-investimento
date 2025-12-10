@@ -6,11 +6,12 @@ import br.gov.caixa.entity.business.Investimento;
 import br.gov.caixa.repository.business.ClienteRepository;
 import br.gov.caixa.repository.business.InvestimentoRepository;
 import br.gov.caixa.service.business.PerfilRiscoService;
+import br.gov.caixa.utils.PerfilRiscoCalculator;
+import io.quarkus.test.InjectMock;
+import io.quarkus.test.junit.QuarkusTest;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -21,29 +22,32 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
+@QuarkusTest
 public class PerfilRiscoServiceTest {
 
-    @InjectMocks
+    @Inject
     PerfilRiscoService perfilRiscoService;
 
-    @Mock
+    @InjectMock
     InvestimentoRepository investimentoRepository;
 
-    @Mock
+    @InjectMock
     ClienteRepository clienteRepository;
 
+    @Mock
+    PerfilRiscoCalculator perfilRiscoCalculator;
+
     private Investimento investimento(double valor, int prazoMeses) {
-        Investimento i = new Investimento();
-        i.setValor(valor);
-        i.setPrazoMeses(prazoMeses);
-        i.setData(LocalDateTime.now().minusMonths(prazoMeses));
-        ChronoUnit.MONTHS.between(i.getData(), LocalDateTime.now());
-        return i;
+        Investimento investimento = new Investimento();
+        investimento.setValor(valor);
+        investimento.setPrazoMeses(prazoMeses);
+        investimento.setData(LocalDateTime.now().minusMonths(prazoMeses));
+        ChronoUnit.MONTHS.between(investimento.getData(), LocalDateTime.now());
+        return investimento;
     }
 
     @Test
-    void devePerfilRiscoModeradoComHistoricoMedio() {
+    void deveRetornarPerfilRiscoModeradoComHistoricoMedio() {
         Long clienteId = 1L;
 
         List<Investimento> historico = List.of(

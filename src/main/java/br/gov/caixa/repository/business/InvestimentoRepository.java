@@ -10,7 +10,7 @@ import java.util.List;
 public class InvestimentoRepository implements PanacheRepository<Investimento> {
 
     public List<Investimento> findByCliente(Long clienteId){
-        return list("cliente.id", clienteId);
+         return list("cliente.id", clienteId);
     }
 
     public long countByCliente(Long clienteId){

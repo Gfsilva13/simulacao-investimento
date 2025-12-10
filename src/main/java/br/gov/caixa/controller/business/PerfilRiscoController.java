@@ -31,8 +31,7 @@ public class PerfilRiscoController {
                     .build();
         }
         try {
-            return Optional.ofNullable(perfilRiscoService.perfilRisco(id))
-                    .filter(list -> !list.isEmpty())
+            return perfilRiscoService.perfilRisco(id)
                     .map(Response::ok)
                     .map(Response.ResponseBuilder::build)
                     .orElseGet(() -> Response.status(Response.Status.NOT_FOUND)

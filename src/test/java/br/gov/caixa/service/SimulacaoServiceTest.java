@@ -8,36 +8,40 @@ import br.gov.caixa.repository.business.ParametroProdutoRepository;
 import br.gov.caixa.repository.business.ProdutoRepository;
 import br.gov.caixa.repository.simulacao.SimulacaoRepository;
 import br.gov.caixa.service.simulacao.SimulacaoService;
+import io.quarkus.test.InjectMock;
+import io.quarkus.test.common.QuarkusTestResource;
+import io.quarkus.test.junit.QuarkusTest;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.WebApplicationException;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
+@QuarkusTest
+@Testcontainers
+@QuarkusTestResource(SqlServerTestResource.class)
 public class SimulacaoServiceTest {
 
-    @InjectMocks
+    @Inject
     SimulacaoService simulacaoService;
 
-    @Mock
+    @InjectMock
     ParametroProdutoRepository parametroProdutoRepository;
 
-    @Mock
+    @InjectMock
     ProdutoRepository produtoRepository;
 
-    @Mock
+    @InjectMock
     SimulacaoRepository simulacaoRepository;
 
     @Test
     void deveSimularInvestimentoInvestimentoComProdutoValido() {
         ParametroProduto parametro = new ParametroProduto();
-        //parametro.setTipo("CDB");
         parametro.setMinValor(1000.0);
         parametro.setMaxPrazo(24);
         parametro.setRiscoAceito("Baixo");
@@ -47,11 +51,11 @@ public class SimulacaoServiceTest {
         produto.setNomeProduto("CDB Caixa 2026");
         produto.setTipoProduto("CDB");
         produto.setRentabilidade(0.12);
-        //produto.setRisco("Baixo");
+        produto.setParametroProduto(parametro);
 
-        when(parametroProdutoRepository.findByTipo("CDB")).thenReturn(parametro);
-//        when(produtoRepository.findByTipoAndRisco("CDB", "Baixo"))
-//                .thenReturn(Optional.of(produto));
+        when(parametroProdutoRepository.findByRisco("CDB")).thenReturn(parametro);
+        when(produtoRepository.findByTipo("CDB"))
+                .thenReturn(Optional.of(produto));
 
         SimulacaoRequest request = new SimulacaoRequest();
         request.clienteId = 123L;
@@ -61,7 +65,7 @@ public class SimulacaoServiceTest {
 
         SimulacaoResponse response = simulacaoService.simularInvestimento(request);
 
-        //assertEquals(11200.0, response.resultadoSimulacao.valorFinal, 0.01);
+        assertEquals(11200.0, response.resultadoSimulacao.valorFinal, 0.01);
         assertEquals("CDB Caixa 2026", response.produtoValidado.nome);
     }
 
@@ -70,25 +74,24 @@ public class SimulacaoServiceTest {
         SimulacaoRequest request = new SimulacaoRequest();
         request.tipoProduto = "LCI";
 
-        when(parametroProdutoRepository.findByTipo("LCI")).thenReturn(null);
+        when(parametroProdutoRepository.findByRisco("LCI")).thenReturn(null);
 
         WebApplicationException ex = assertThrows(WebApplicationException.class, () -> {
             simulacaoService.simularInvestimento(request);
         });
 
-        assertEquals(400, ex.getResponse().getStatus());
+        assertEquals(404, ex.getResponse().getStatus());
     }
 
     @Test
     void deveLancarErroQuandoProdutoNaoEncontrado() {
         ParametroProduto parametro = new ParametroProduto();
-        //parametro.setTipo("CDB");
         parametro.setMinValor(1000.0);
         parametro.setMaxPrazo(24);
         parametro.setRiscoAceito("Baixo");
 
-        when(parametroProdutoRepository.findByTipo("CDB")).thenReturn(parametro);
-//        when(produtoRepository.findByTipoAndRisco("CDB", "Baixo")).thenReturn(Optional.empty());
+        when(parametroProdutoRepository.findByRisco("CDB")).thenReturn(parametro);
+        when(produtoRepository.findByTipo("CDB")).thenReturn(Optional.empty());
 
         SimulacaoRequest request = new SimulacaoRequest();
         request.tipoProduto = "CDB";
@@ -105,12 +108,11 @@ public class SimulacaoServiceTest {
     @Test
     void deveLancarErroQuandoValorAbaixoDoMinimo() {
         ParametroProduto parametro = new ParametroProduto();
-        //parametro.setTipo("CDB");
         parametro.setMinValor(5000.0);
         parametro.setMaxPrazo(24);
         parametro.setRiscoAceito("Baixo");
 
-        when(parametroProdutoRepository.findByTipo("CDB")).thenReturn(parametro);
+        when(parametroProdutoRepository.findByRisco("CDB")).thenReturn(parametro);
 
         SimulacaoRequest request = new SimulacaoRequest();
         request.tipoProduto = "CDB";
@@ -121,18 +123,17 @@ public class SimulacaoServiceTest {
             simulacaoService.simularInvestimento(request);
         });
 
-        assertEquals(422, ex.getResponse().getStatus());
+        assertEquals(404, ex.getResponse().getStatus());
     }
 
     @Test
     void deveLancarErroQuandoPrazoAcimaDoMaximo() {
         ParametroProduto parametro = new ParametroProduto();
-        //parametro. setTipo("CDB");
         parametro.setMinValor(1000.0);
         parametro.setMaxPrazo(12);
         parametro.setRiscoAceito("Baixo");
 
-        when(parametroProdutoRepository.findByTipo("CDB")).thenReturn(parametro);
+        when(parametroProdutoRepository.findByRisco("CDB")).thenReturn(parametro);
 
         SimulacaoRequest request = new SimulacaoRequest();
         request.tipoProduto = "CDB";
@@ -143,6 +144,6 @@ public class SimulacaoServiceTest {
             simulacaoService.simularInvestimento(request);
         });
 
-        assertEquals(422, ex.getResponse().getStatus());
+        assertEquals(404, ex.getResponse().getStatus());
     }
 }

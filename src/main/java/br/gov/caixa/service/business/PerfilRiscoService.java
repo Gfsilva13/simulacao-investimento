@@ -21,7 +21,6 @@ public class PerfilRiscoService {
     PerfilRiscoCalculator perfilRiscoCalculator;
     @Inject
     InvestimentoRepository investimentoRepository;
-
     @Inject
     ClienteRepository clienteRepository;
 
