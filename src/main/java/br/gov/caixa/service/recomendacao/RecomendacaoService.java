@@ -1,4 +1,4 @@
-package br.gov.caixa.service;
+package br.gov.caixa.service.recomendacao;
 
 import br.gov.caixa.dto.business.PerfilRiscoDTO;
 import br.gov.caixa.dto.business.ProdutoDTO;
@@ -28,9 +28,8 @@ public class RecomendacaoService {
     }
 
     public List<ProdutoDTO> recomendarPorCliente(Long clienteId) {
-        PerfilRiscoDTO perfil = perfilRiscoService.perfilRisco(clienteId)
+        PerfilRiscoDTO perfil = perfilRiscoService.perfilCliente(clienteId)
                 .orElseThrow(() -> new WebApplicationException("Perfil não encontrado", 404));
-
         return recomendarPorPerfil(perfil.perfil);
     }
 }

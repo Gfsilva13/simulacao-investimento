@@ -1,13 +1,9 @@
 package br.gov.caixa.repository;
 
-import br.gov.caixa.entity.business.ParametroProduto;
 import br.gov.caixa.entity.business.ProdutoInvestimento;
 import br.gov.caixa.repository.business.ProdutoRepository;
-import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -21,76 +17,28 @@ class ProdutoRepositoryTest {
     @Inject
     ProdutoRepository repository;
 
-    private ProdutoInvestimento produto1, produto2, produto3;
-    private ParametroProduto parametro1, parametro2, parametro3;
-
-    @BeforeEach
-    @Transactional
-    void setUp() {
-        repository.deleteAll();
-
-        parametro1 = new ParametroProduto();
-        parametro1.setRiscoAceito("Baixo");
-        parametro1.setMaxPrazo(36);
-        parametro1.setMinValor(10.0);
-        repository.getEntityManager().persist(parametro1);
-
-        produto1 = new ProdutoInvestimento();
-        produto1.setNomeProduto("1");
-        produto1.setTipoProduto("CDB");
-        produto1.setParametroProduto(parametro1);
-        produto1.setRentabilidade(0.5);
-        repository.persist(produto1);
-
-        parametro2 = new ParametroProduto();
-        parametro2.setRiscoAceito("Medio");
-        parametro2.setMaxPrazo(36);
-        parametro2.setMinValor(10.0);
-        repository.getEntityManager().persist(parametro2);
-
-        produto2 = new ProdutoInvestimento();
-        produto2.setNomeProduto("2");
-        produto2.setTipoProduto("RF");
-        produto2.setParametroProduto(parametro2);
-        produto2.setRentabilidade(1.0);
-        repository.persist(produto2);
-
-        parametro3 = new ParametroProduto();
-        parametro3.setRiscoAceito("Alto");
-        parametro3.setMaxPrazo(36);
-        parametro3.setMinValor(10.0);
-        repository.getEntityManager().persist(parametro3);
-
-        produto3 = new ProdutoInvestimento();
-        produto3.setNomeProduto("3");
-        produto3.setTipoProduto("LCI");
-        produto3.setParametroProduto(parametro3);
-        produto3.setRentabilidade(1.5);
-        repository.persist(produto3);
-    }
-
     @Test
     void testFindByTipo() {
-        Optional<ProdutoInvestimento> resultado = repository.findByTipo("CDB");
+        Optional<ProdutoInvestimento> resultadoTipo = repository.findByTipo("CDB");
 
-        assertTrue(resultado.isPresent());
-        assertEquals("CDB", resultado.get().getTipoProduto());
+        assertTrue(resultadoTipo.isPresent());
+        assertEquals("CDB", resultadoTipo.get().getTipoProduto());
     }
 
     @Test
     void testFindByPerfilConservador() {
-        List<ProdutoInvestimento> resultado = repository.findByPerfil("Conservador");
+        List<ProdutoInvestimento> resultadoCon = repository.findByPerfil("Conservador");
 
-        assertEquals(1, resultado.size());
-        assertEquals("Baixo", resultado.get(0).getParametroProduto().getRiscoAceito());
+        assertEquals(1, resultadoCon.size());
+        assertEquals("Baixo", resultadoCon.get(0).getParametroProduto().getRiscoAceito());
     }
 
     @Test
     void testFindByPerfilModerado() {
-        List<ProdutoInvestimento> resultado = repository.findByPerfil("Moderado");
+        List<ProdutoInvestimento> resultadoMod = repository.findByPerfil("Moderado");
 
-        assertEquals(2, resultado.size());
-        List<String> riscos = resultado.stream()
+        assertEquals(2, resultadoMod.size());
+        List<String> riscos = resultadoMod.stream()
                 .map(p -> p.getParametroProduto().getRiscoAceito())
                 .toList();
         assertTrue(riscos.contains("Baixo"));
@@ -99,10 +47,10 @@ class ProdutoRepositoryTest {
 
     @Test
     void testFindByPerfilAgressivo() {
-        List<ProdutoInvestimento> resultado = repository.findByPerfil("Agressivo");
+        List<ProdutoInvestimento> resultadoAgr = repository.findByPerfil("Agressivo");
 
-        assertEquals(2, resultado.size());
-        List<String> riscos = resultado.stream()
+        assertEquals(2, resultadoAgr.size());
+        List<String> riscos = resultadoAgr.stream()
                 .map(p -> p.getParametroProduto().getRiscoAceito())
                 .toList();
         assertTrue(riscos.contains("Medio"));
@@ -111,8 +59,8 @@ class ProdutoRepositoryTest {
 
     @Test
     void testFindByPerfilDesconhecido() {
-        List<ProdutoInvestimento> resultado = repository.findByPerfil("Desconhecido");
-        assertTrue(resultado.isEmpty());
+        List<ProdutoInvestimento> resultadoDesc = repository.findByPerfil("Desconhecido");
+        assertTrue(resultadoDesc.isEmpty());
     }
 
     @Test

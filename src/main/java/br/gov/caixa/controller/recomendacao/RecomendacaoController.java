@@ -1,7 +1,7 @@
-package br.gov.caixa.controller;
+package br.gov.caixa.controller.recomendacao;
 
 import br.gov.caixa.dto.business.ProdutoDTO;
-import br.gov.caixa.service.RecomendacaoService;
+import br.gov.caixa.service.recomendacao.RecomendacaoService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -23,14 +23,14 @@ public class RecomendacaoController {
 
     @GET
     @Path("/cliente/{id}")
-    @RolesAllowed("user")
+    @RolesAllowed({"admin","user"})
     public List<ProdutoDTO> recomendacaoPorCliente(@PathParam("id") Long clienteId){
         return recomendacaoService.recomendarPorCliente(clienteId);
     }
 
     @GET
     @Path("/perfil/{perfil}")
-    @RolesAllowed("user")
+    @RolesAllowed({"admin","user"})
     public List<ProdutoDTO> recomendacaoPorPerfil(@PathParam("perfil") String perfil){
         return recomendacaoService.recomendarPorPerfil(perfil);
     }

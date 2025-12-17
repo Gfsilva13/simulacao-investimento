@@ -1,4 +1,4 @@
-package br.gov.caixa.service;
+package br.gov.caixa.service.businnes;
 
 import br.gov.caixa.dto.business.PerfilRiscoDTO;
 import br.gov.caixa.entity.business.Cliente;

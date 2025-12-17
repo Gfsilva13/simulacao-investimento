@@ -40,4 +40,11 @@ public class PerfilRiscoService {
 
         return Optional.of(new PerfilRiscoDTO(clienteId, perfil, pontuacao, descricao));
     }
+
+    public Optional<PerfilRiscoDTO> perfilCliente(Long clienteId) {
+        Cliente cliente = clienteRepository.findByOptional(clienteId)
+                .orElseThrow(() -> new WebApplicationException("Cliente não encontrado", 404));
+        return Optional.of(new PerfilRiscoDTO(cliente.getId(), cliente.getPerfilRisco(),
+                cliente.getPontuacao(), "Perfil Cliente"));
+        }
 }

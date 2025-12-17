@@ -14,13 +14,6 @@ public class ProdutoRepository implements PanacheRepository<ProdutoInvestimento>
                 return find("tipoProduto = ?1",tipo).firstResultOptional();
     }
 
-//    public List<ProdutoInvestimento> findByPerfil(String perfilRisco){
-//        return switch (perfilRisco){
-//             case "Conservador" -> list("riscoAceito = ?1", "Baixo");
-//             case "Moderado" -> list("riscoAceito in (?1, ?2", "Baixo", "Medio");
-//             case "Agressivo" -> list("riscoAceito in (?1, ?2)", "Medio", "Alto");
-//            default -> List.of();
-//        };
     public List<ProdutoInvestimento> findByPerfil(String perfilRisco) {
         return switch (perfilRisco) {
             case "Conservador" -> list("parametroProduto.riscoAceito = ?1", "Baixo");

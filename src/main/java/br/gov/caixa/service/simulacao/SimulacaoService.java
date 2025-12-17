@@ -51,7 +51,14 @@ public class SimulacaoService {
     public List<SimulacaoHistoricoDTO> listarTodas() {
         List<Simulacao> simulacoes = simulacaoRepository.findAllOrdered();
         return simulacoes.stream()
-                .map(s -> SimulacaoHistoricoDTO.fromEntity(s))
+                .map(SimulacaoHistoricoDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    public List<SimulacaoHistoricoDTO> listarSimulacaoCliente(Long clienteId){
+        List<Simulacao> simulacoesCliente = simulacaoRepository.findByCliente(clienteId);
+        return simulacoesCliente.stream()
+                .map(SimulacaoHistoricoDTO::fromEntity)
                 .collect(Collectors.toList());
     }
 

@@ -47,6 +47,13 @@ public class SimulacaoController {
     }
 
     @GET
+    @Path("/historicoCliente/{clienteId}")
+    @RolesAllowed({"admin","user"})
+    public List<SimulacaoHistoricoDTO> listarHistoricoCliente(Long clienteId) {
+         return simulacaoService.listarSimulacaoCliente(clienteId);
+    }
+
+    @GET
     @Path("/simulacoes/por-produto-dia")
     @RolesAllowed({"admin","user"})
     public List<SimulacaoResumoPorProdutoDTO> listarPorProdutoEDia(){

@@ -1,15 +1,17 @@
-package br.gov.caixa.service;
+package br.gov.caixa.service.simulacao;
 
 import br.gov.caixa.dto.simulacao.SimulacaoRequest;
 import br.gov.caixa.dto.simulacao.SimulacaoResponse;
+import br.gov.caixa.entity.business.Cliente;
 import br.gov.caixa.entity.business.ParametroProduto;
 import br.gov.caixa.entity.business.ProdutoInvestimento;
 import br.gov.caixa.entity.simulacao.Simulacao;
+import br.gov.caixa.repository.business.ClienteRepository;
 import br.gov.caixa.repository.business.ParametroProdutoRepository;
 import br.gov.caixa.repository.business.ProdutoRepository;
 import br.gov.caixa.repository.simulacao.SimulacaoRepository;
 
-import br.gov.caixa.service.simulacao.SimulacaoService;
+import br.gov.caixa.service.SqlServerTestResource;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.security.TestSecurity;
@@ -38,9 +40,22 @@ public class SimulacaoServiceIntegrationTest {
     @Inject
     SimulacaoRepository simulacaoRepository;
 
+    @Inject
+    ClienteRepository clienteRepository;
+
+    private Cliente cliente;
+
     @BeforeEach
     @Transactional
     void setup() {
+        simulacaoRepository.deleteAll();
+
+        cliente = new Cliente();
+        cliente.setNome("Teste");
+        cliente.setPontuacao(10);
+        cliente.setPerfilRisco("Conservador");
+        clienteRepository.persist(cliente);
+
         ParametroProduto parametro = new ParametroProduto();
         parametro.setMinValor(1000.0);
         parametro.setMaxPrazo(24);
@@ -59,11 +74,10 @@ public class SimulacaoServiceIntegrationTest {
     @TestSecurity(user = "testUser", roles = {"user"})
     void deveExecutarSimulacaoComSQLServer() {
         SimulacaoRequest request = new SimulacaoRequest();
-        request.clienteId = 99L;
+        request.clienteId = cliente.getId();
         request.valor = 10000.0;
         request.prazoMeses = 12;
         request.tipoProduto = "CDB";
-
         SimulacaoResponse response = simulacaoService.simularInvestimento(request);
 
         List<Simulacao> simulacoes = simulacaoRepository.listAll();

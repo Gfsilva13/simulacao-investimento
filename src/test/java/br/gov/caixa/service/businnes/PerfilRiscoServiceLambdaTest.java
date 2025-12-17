@@ -1,4 +1,4 @@
-package br.gov.caixa.service;
+package br.gov.caixa.service.businnes;
 
 import br.gov.caixa.dto.business.PerfilRiscoDTO;
 import br.gov.caixa.entity.business.Cliente;
@@ -11,7 +11,6 @@ import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
