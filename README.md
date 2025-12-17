@@ -64,7 +64,7 @@ O `application.properties` já está preparado para conectar ao SQL Server e ao 
 
 ---
 
-## 🧪 Testar a API
+## 🧪 Uso da API
 
 - Gere o token. Veja exemplo com o Postman: http://localhost:8180/realms/invest-api/protocol/openid-connect/token
 <img width="620" height="240" alt="image" src="https://github.com/user-attachments/assets/b66388a4-6c0b-4290-ac27-c92cc14e2a8f" />
