@@ -19,7 +19,7 @@ import java.util.List;
 @Path("/simular-investimento")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Tag(name="Simulações")
+@Tag(name="Simulações", description = "Simula investimento em um produto para determinado cliente.")
 public class SimulacaoController {
 
     @Inject

@@ -20,6 +20,8 @@ import org.junit.jupiter.api.*;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import jakarta.inject.Inject;
+
+import java.math.BigDecimal;
 import java.util.*;
 
 @Testcontainers
@@ -57,14 +59,14 @@ public class SimulacaoServiceIntegrationTest {
         clienteRepository.persist(cliente);
 
         ParametroProduto parametro = new ParametroProduto();
-        parametro.setMinValor(1000.0);
+        parametro.setMinValor(new BigDecimal("1000.00"));
         parametro.setMaxPrazo(24);
         parametro.setRiscoAceito("Baixo");
         parametroProdutoRepository.persist(parametro);
 
         ProdutoInvestimento produto = new ProdutoInvestimento();
         produto.setTipoProduto("CDB");
-        produto.setRentabilidade(0.12);
+        produto.setRentabilidade(0.1);
         produto.setNomeProduto("CDB Real");
         produto.setParametroProduto(parametro);
         produtoRepository.persist(produto);
@@ -75,13 +77,13 @@ public class SimulacaoServiceIntegrationTest {
     void deveExecutarSimulacaoComSQLServer() {
         SimulacaoRequest request = new SimulacaoRequest();
         request.clienteId = cliente.getId();
-        request.valor = 10000.0;
+        request.valor = new BigDecimal("1000.00");
         request.prazoMeses = 12;
         request.tipoProduto = "CDB";
         SimulacaoResponse response = simulacaoService.simularInvestimento(request);
 
         List<Simulacao> simulacoes = simulacaoRepository.listAll();
         Assertions.assertEquals(1, simulacoes.size());
-        Assertions.assertEquals(11200.0, simulacoes.get(0).getValorFinal(), 0.01);
+        Assertions.assertEquals(0, (new BigDecimal("1120.00").compareTo(simulacoes.get(0).getValorFinal())));
     }
 }

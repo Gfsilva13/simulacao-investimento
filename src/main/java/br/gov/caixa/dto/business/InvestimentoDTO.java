@@ -2,13 +2,14 @@ package br.gov.caixa.dto.business;
 
 import br.gov.caixa.entity.business.Investimento;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class InvestimentoDTO {
 
     public Long id;
     public String tipo;
-    public Double valor;
+    public BigDecimal valor;
     public Double rentabilidade;
     public LocalDateTime data;
 

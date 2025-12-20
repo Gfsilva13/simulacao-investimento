@@ -11,6 +11,7 @@ import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -55,14 +56,14 @@ class InvestimentoRepositoryTest{
         Investimento investimento1 = new Investimento();
         investimento1.setCliente(cliente1);
         investimento1.setProdutoInvestimento(produto1);
-        investimento1.setValor(1000.00);
+        investimento1.setValor(new BigDecimal("1000.00"));
         investimento1.setRentabilidade(10.00);
         investimento1.setData(LocalDateTime.now());
 
         Investimento investimento2 = new Investimento();
         investimento2.setCliente(cliente2);
         investimento2.setProdutoInvestimento(produto2);
-        investimento2.setValor(2000.00);
+        investimento2.setValor(new BigDecimal("2000.00"));
         investimento2.setRentabilidade(20.00);
         investimento2.setData(LocalDateTime.now());
 
@@ -70,7 +71,7 @@ class InvestimentoRepositoryTest{
         investimento3.setCliente(cliente2);
         investimento3.setProdutoInvestimento(produto1);
         investimento3.setRentabilidade(5.00);
-        investimento3.setValor(500.00);
+        investimento3.setValor(new BigDecimal("500.00"));
         investimento3.setData(LocalDateTime.now());
 
         investimentoRepository.persist(investimento1);
@@ -96,11 +97,11 @@ class InvestimentoRepositoryTest{
 
     @Test
     void deveSomarTotalInvestidoPorCliente() {
-        double totalCliente1 = investimentoRepository.totalInvestidoPorCliente(cliente1.getId());
-        double totalCliente2 = investimentoRepository.totalInvestidoPorCliente(cliente2.getId());
+        BigDecimal totalCliente1 = investimentoRepository.totalInvestidoPorCliente(cliente1.getId());
+        BigDecimal totalCliente2 = investimentoRepository.totalInvestidoPorCliente(cliente2.getId());
 
-        assertEquals(1000.00, totalCliente1, 0.001);
-        assertEquals(2500.00, totalCliente2, 0.001);
+        assertTrue(totalCliente1.compareTo(new BigDecimal("1000.00")) == 0);
+        assertTrue(totalCliente2.compareTo(new BigDecimal("2500.00")) == 0);
     }
 }
 

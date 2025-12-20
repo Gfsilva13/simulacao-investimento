@@ -11,6 +11,7 @@ import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -52,27 +53,27 @@ class SimulacaoRepositoryTest {
         simulacaoTeste1.setCliente(clienteSimulacao1);
         simulacaoTeste1.setProduto(produtoSimulacao1);
         simulacaoTeste1.setDataSimulacao(LocalDateTime.now());
-        simulacaoTeste1.setValorFinal(1100.00);
+        simulacaoTeste1.setValorFinal(new BigDecimal("1100.00"));
         simulacaoTeste1.setPrazoMeses(12);
-        simulacaoTeste1.setValorInvestido(1000.00);
+        simulacaoTeste1.setValorInvestido(new BigDecimal("1000.00"));
         simulacaoRepositoryTest.persist(simulacaoTeste1);
 
         Simulacao simulacaoTeste2 = new Simulacao();
         simulacaoTeste2.setCliente(clienteSimulacao1);
         simulacaoTeste2.setProduto(produtoSimulacao2);
         simulacaoTeste2.setDataSimulacao(LocalDateTime.now());
-        simulacaoTeste2.setValorFinal(2200.00);
+        simulacaoTeste2.setValorFinal(new BigDecimal("2200.00"));
         simulacaoTeste2.setPrazoMeses(24);
-        simulacaoTeste2.setValorInvestido(2000.00);
+        simulacaoTeste2.setValorInvestido(new BigDecimal("2000.00"));
         simulacaoRepositoryTest.persist(simulacaoTeste2);
 
         Simulacao simulacaoTeste3 = new Simulacao();
         simulacaoTeste3.setCliente(clienteSimulacao2);
         simulacaoTeste3.setProduto(produtoSimulacao1);
         simulacaoTeste3.setDataSimulacao(LocalDateTime.now());
-        simulacaoTeste3.setValorFinal(3300.00);
+        simulacaoTeste3.setValorFinal(new BigDecimal("3300.00"));
         simulacaoTeste3.setPrazoMeses(36);
-        simulacaoTeste3.setValorInvestido(3000.00);
+        simulacaoTeste3.setValorInvestido(new BigDecimal("3000.00"));
         simulacaoRepositoryTest.persist(simulacaoTeste3);
     }
     @Test

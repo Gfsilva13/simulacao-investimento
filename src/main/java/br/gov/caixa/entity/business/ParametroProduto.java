@@ -2,6 +2,8 @@ package br.gov.caixa.entity.business;
 
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "parametro_produto")
 public class ParametroProduto {
@@ -11,7 +13,7 @@ public class ParametroProduto {
     private Long id;
 
     @Column(nullable = false)
-    private Double minValor;
+    private BigDecimal minValor;
 
     @Column(nullable = false)
     private Integer maxPrazo;
@@ -27,11 +29,11 @@ public class ParametroProduto {
         this.id = id;
     }
 
-   public Double getMinValor() {
+   public BigDecimal getMinValor() {
         return minValor;
     }
 
-    public void setMinValor(Double minValor) {
+    public void setMinValor(BigDecimal minValor) {
         this.minValor = minValor;
     }
 

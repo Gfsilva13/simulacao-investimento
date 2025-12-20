@@ -11,7 +11,7 @@ public class SimulacaoValidator {
     public SimulacaoValidator() {}
 
     public static void validar(SimulacaoRequest request, ParametroProduto parametro) {
-        if (request.valor < parametro.getMinValor()) {
+        if (request.valor.compareTo(parametro.getMinValor()) < 0) {
             throw new WebApplicationException("Valor abaixo do mínimo permitido", 422);
         }
 

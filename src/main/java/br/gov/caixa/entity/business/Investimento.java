@@ -1,6 +1,8 @@
 package br.gov.caixa.entity.business;
 
 import jakarta.persistence.*;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -19,7 +21,7 @@ public class Investimento {
     private ProdutoInvestimento produtoInvestimento;
 
     @Column(nullable = false)
-    private Double valor;
+    private BigDecimal valor;
 
     @Column(nullable = false)
     private Double rentabilidade;
@@ -38,11 +40,11 @@ public class Investimento {
         this.id = id;
     }
 
-    public Double getValor() {
+    public BigDecimal getValor() {
         return valor;
     }
 
-    public void setValor(Double valor) {
+    public void setValor(BigDecimal valor) {
         this.valor = valor;
     }
 

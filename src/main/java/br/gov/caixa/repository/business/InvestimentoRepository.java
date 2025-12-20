@@ -4,6 +4,7 @@ import br.gov.caixa.entity.business.Investimento;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @ApplicationScoped
@@ -17,8 +18,9 @@ public class InvestimentoRepository implements PanacheRepository<Investimento> {
         return count("cliente.id", clienteId);
     }
 
-    public double totalInvestidoPorCliente(Long clienteId){
-        return find("cliente.id", clienteId).stream().
-                mapToDouble(i -> i.getValor()).sum();
+    public BigDecimal totalInvestidoPorCliente(Long clienteId){
+        return find("cliente.id", clienteId).stream()
+                        .map(i -> i.getValor())
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }

@@ -7,6 +7,8 @@ import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @QuarkusTest
@@ -30,7 +32,7 @@ class ParametroProdutoRepositoryTest {
 
         assertNotNull(resultado);
         assertEquals("Baixo", resultado.getRiscoAceito());
-        assertEquals(100.00, resultado.getMinValor(), 0.01);
+        assertTrue(resultado.getMinValor().compareTo(new BigDecimal("100.00")) == 0);
         assertEquals(36, resultado.getMaxPrazo());
     }
 }

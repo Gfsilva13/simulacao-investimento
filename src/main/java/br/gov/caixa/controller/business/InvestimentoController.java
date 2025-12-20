@@ -1,6 +1,7 @@
 package br.gov.caixa.controller.business;
 
 import br.gov.caixa.service.business.InvestimentoService;
+import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;

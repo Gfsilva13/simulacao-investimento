@@ -10,9 +10,11 @@ import br.gov.caixa.utils.PerfilRiscoCalculator;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.WebApplicationException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
@@ -37,7 +39,7 @@ public class PerfilRiscoServiceTest {
     @Mock
     PerfilRiscoCalculator perfilRiscoCalculator;
 
-    private Investimento investimento(double valor, int prazoMeses) {
+    private Investimento investimento(BigDecimal valor, int prazoMeses) {
         Investimento investimento = new Investimento();
         investimento.setValor(valor);
         investimento.setPrazoMeses(prazoMeses);
@@ -51,9 +53,9 @@ public class PerfilRiscoServiceTest {
         Long clienteId = 1L;
 
         List<Investimento> historico = List.of(
-                investimento(2000.0, 6),
-                investimento(3000.0, 9),
-                investimento(4500.0, 12)
+                investimento(BigDecimal.valueOf(2000.0), 6),
+                investimento(BigDecimal.valueOf(3000.0), 9),
+                investimento(BigDecimal.valueOf(4500.0), 12)
         );
 
         when(clienteRepository.findByOptional(clienteId)).thenReturn(Optional.of(new Cliente()));
@@ -72,9 +74,9 @@ public class PerfilRiscoServiceTest {
         Long clienteId = 2L;
 
         List<Investimento> historico = List.of(
-                investimento(1500.0, 3),
-                investimento(2200.0, 2),
-                investimento(2500.0, 1)
+                investimento(BigDecimal.valueOf(1500.0), 3),
+                investimento(BigDecimal.valueOf(2200.0), 2),
+                investimento(BigDecimal.valueOf(2500.0), 1)
         );
 
         when(clienteRepository.findByOptional(clienteId)).thenReturn(Optional.of(new Cliente()));
@@ -91,9 +93,9 @@ public class PerfilRiscoServiceTest {
         Long clienteId = 3L;
 
         List<Investimento> historico = List.of(
-                investimento(15000.0, 18),
-                investimento(12000.0, 24),
-                investimento(10000.0, 12)
+                investimento(BigDecimal.valueOf(15000.0), 18),
+                investimento(BigDecimal.valueOf(12000.0), 24),
+                investimento(BigDecimal.valueOf(10000.0), 12)
         );
 
         when(clienteRepository.findByOptional(clienteId)).thenReturn(Optional.of(new Cliente()));
@@ -117,5 +119,41 @@ public class PerfilRiscoServiceTest {
         assertEquals("Conservador", perfil.perfil);
         assertEquals(0, perfil.pontuacao);
         assertTrue(perfil.descricao.contains("perfil padrão"));
+    }
+
+    @Test
+    void deveRetornarPerfilClienteQuandoClienteExiste() {
+        Long clienteId = 1L;
+        Cliente cliente = new Cliente();
+        cliente.setId(clienteId);
+        cliente.setPerfilRisco("Moderado");
+        cliente.setPontuacao(70);
+
+        when(clienteRepository.findByOptional(clienteId))
+                .thenReturn(Optional.of(cliente));
+
+        Optional<PerfilRiscoDTO> result =
+                perfilRiscoService.perfilCliente(clienteId);
+        assertTrue(result.isPresent());
+
+        PerfilRiscoDTO dto = result.get();
+        assertEquals(clienteId, dto.clienteId);
+        assertEquals("Moderado", dto.perfil);
+        assertEquals(70, dto.pontuacao);
+        assertEquals("Perfil Cliente", dto.descricao);
+    }
+
+    @Test
+    void deveLancarExcecaoQuandoClienteNaoEncontrado() {
+        Long clienteId = 2L;
+        when(clienteRepository.findByOptional(clienteId))
+                .thenReturn(Optional.empty());
+
+        WebApplicationException exception =
+                assertThrows(WebApplicationException.class,
+                        () -> perfilRiscoService.perfilCliente(clienteId));
+
+        assertEquals(404, exception.getResponse().getStatus());
+        assertEquals("Cliente não encontrado", exception.getMessage());
     }
 }

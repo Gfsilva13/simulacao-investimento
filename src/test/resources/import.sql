@@ -1,6 +1,6 @@
 -- Inserindo clientes
-INSERT INTO cliente (nome, perfilRisco, pontuacao) VALUES ('Genivaldo', 'Conservador', 50);
-INSERT INTO cliente (nome, perfilRisco, pontuacao) VALUES ('Ferreira', 'Moderado', 70);
+INSERT INTO cliente (nome, perfilRisco, pontuacao) VALUES ('Joao', 'Conservador', 50);
+INSERT INTO cliente (nome, perfilRisco, pontuacao) VALUES ('Jose', 'Moderado', 70);
 INSERT INTO cliente (nome, perfilRisco, pontuacao) VALUES ('Silva', 'Agressivo', 90);
 
 -- Inserindo parâmetros de produto

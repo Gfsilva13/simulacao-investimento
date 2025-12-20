@@ -1,12 +1,14 @@
 package br.gov.caixa.dto.simulacao;
 
+import java.math.BigDecimal;
+
 public class ResultadoSimulacaoDTO {
 
-    public Double valorFinal;
+    public BigDecimal valorFinal;
     public Double rentabilidadeEfetiva;
     public Integer prazoMeses;
 
-    public ResultadoSimulacaoDTO(Double valorFinal,
+    public ResultadoSimulacaoDTO(BigDecimal valorFinal,
                                  Double rentabilidadeEfetiva,
                                  Integer prazoMeses){
         this.valorFinal = valorFinal;

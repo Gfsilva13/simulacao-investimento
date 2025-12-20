@@ -3,6 +3,8 @@ package br.gov.caixa.utils;
 import br.gov.caixa.entity.business.Investimento;
 import jakarta.enterprise.context.ApplicationScoped;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 @ApplicationScoped
@@ -12,16 +14,18 @@ public class PerfilRiscoCalculator {
         if (historico == null || historico.isEmpty()) {
             return 0;
         }
-        double volume = historico.stream().mapToDouble(Investimento::getValor).sum();
+        BigDecimal volume = historico.stream().map(Investimento::getValor)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
         int frequencia = historico.size();
         double prazoMedio = historico.stream()
-                .mapToDouble(i -> i.getPrazoMeses())
+                .mapToDouble(Investimento::getPrazoMeses)
                 .average()
-                .orElse(0);
+                .orElse(0.0);
+        int pVolume = volume.compareTo(new BigDecimal("10000")) >= 0
+                ? 40 : volume.divide(new BigDecimal("250"), RoundingMode.DOWN).intValue();
 
-        int pVolume = volume >= 10000 ? 40 : (int)(volume / 250);
         int pFreq = frequencia >= 10 ? 30 : frequencia * 3;
-        int pPrazo = prazoMedio >= 12 ? 30 : (int)(prazoMedio * 2.5);
+        int pPrazo = prazoMedio >= 12 ? 30 : (int)Math.floor(prazoMedio * 2.5);
 
         return Math.min(pVolume + pFreq + pPrazo, 100);
     }

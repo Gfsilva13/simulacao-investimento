@@ -15,6 +15,8 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.WebApplicationException;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -40,12 +42,12 @@ public class SimulacaoService {
     public SimulacaoResponse simularInvestimento(SimulacaoRequest request){
         ProdutoInvestimento produtoInvestimento = buscarProdutoCompativel(request.tipoProduto);
         simulacaoValidator.validar(request, produtoInvestimento.getParametroProduto());
-        double valorFinal = simulacaoCalculator.calcularValorFinal(request.valor,
+        BigDecimal valorFinal = simulacaoCalculator.calcularValorFinal(request.valor,
                                                produtoInvestimento.getRentabilidade(),
                                                request.prazoMeses);
-        double valorArredondado = Math.round(valorFinal * 100.0) / 100.0;
-        Simulacao simulacao = registrarSimulacao(request, produtoInvestimento, valorArredondado);
-        return montarResposta(produtoInvestimento, valorArredondado, request.prazoMeses,simulacao.getDataSimulacao());
+      //  double valorArredondado = Math.round(valorFinal * 100.0) / 100.0;
+        Simulacao simulacao = registrarSimulacao(request, produtoInvestimento, valorFinal);
+        return montarResposta(produtoInvestimento, valorFinal, request.prazoMeses,simulacao.getDataSimulacao());
     }
 
     public List<SimulacaoHistoricoDTO> listarTodas() {
@@ -74,10 +76,10 @@ public class SimulacaoService {
         List<SimulacaoResumoPorProdutoDTO> resultado = new ArrayList<>();
         agrupado.forEach((produto, porData) -> {
             porData.forEach((data, simulacoes) -> {
-                double media = simulacoes.stream()
-                        .mapToDouble(s -> s.getValorFinal())
-                        .average()
-                        .orElse(0);
+                BigDecimal media = simulacoes.stream()
+                        .map(Simulacao::getValorFinal)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add)
+                        .divide(new BigDecimal(simulacoes.size()),2, RoundingMode.HALF_EVEN);
                 resultado.add(new SimulacaoResumoPorProdutoDTO(produto, data, simulacoes.size(), media));
             });
         });
@@ -90,7 +92,7 @@ public class SimulacaoService {
                 tipo, 404));
     }
 
-    private SimulacaoResponse montarResposta(ProdutoInvestimento produto, double valorFinal, int prazoMeses, LocalDateTime data) {
+    private SimulacaoResponse montarResposta(ProdutoInvestimento produto, BigDecimal valorFinal, int prazoMeses, LocalDateTime data) {
         SimulacaoResponse response = new SimulacaoResponse();
         response.produtoValidado = ProdutoDTO.fromEntity(produto);
         response.resultadoSimulacao = new ResultadoSimulacaoDTO(valorFinal, produto.getRentabilidade(), prazoMeses);
@@ -99,7 +101,7 @@ public class SimulacaoService {
     }
 
     @Transactional
-    public Simulacao registrarSimulacao(SimulacaoRequest request, ProdutoInvestimento produto, double valorFinal) {
+    public Simulacao registrarSimulacao(SimulacaoRequest request, ProdutoInvestimento produto, BigDecimal valorFinal) {
         Simulacao simulacao = new Simulacao();
         simulacao.setCliente(clienteRepository.findById(request.clienteId));
         simulacao.setProduto(produtoRepository.findById(produto.getId()));

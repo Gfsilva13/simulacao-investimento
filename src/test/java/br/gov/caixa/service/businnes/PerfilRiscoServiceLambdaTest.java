@@ -12,6 +12,7 @@ import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -34,7 +35,7 @@ public class PerfilRiscoServiceLambdaTest {
     PerfilRiscoCalculator perfilRiscoCalculator;
 
 
-    private Investimento criarInvestimento(double valor, int prazoMeses) {
+    private Investimento criarInvestimento(BigDecimal valor, int prazoMeses) {
         Investimento investimento = new Investimento();
         investimento.setValor(valor);
         investimento.setPrazoMeses(prazoMeses);
@@ -49,9 +50,9 @@ public class PerfilRiscoServiceLambdaTest {
         Cliente cliente = new Cliente();
         cliente.setId(clienteId);
         List<Investimento> historico = List.of(
-                criarInvestimento(2000.0, 6),
-                criarInvestimento(3000.0, 9),
-                criarInvestimento(4500.0, 12)
+                criarInvestimento(BigDecimal.valueOf(2000.0), 6),
+                criarInvestimento(BigDecimal.valueOf(3000.0), 9),
+                criarInvestimento(BigDecimal.valueOf(4500.0), 12)
         );
         when(clienteRepository.findByOptional(clienteId)).thenReturn(Optional.of(new Cliente()));
         when(investimentoRepository.findByCliente(clienteId)).thenReturn(historico);

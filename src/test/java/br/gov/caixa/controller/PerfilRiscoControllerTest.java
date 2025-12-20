@@ -35,6 +35,16 @@ class PerfilRiscoControllerTest {
     @TestSecurity(user = "testUser", roles = {"user"})
     void testObterPerfil_IdInvalido() {
         Response response = controller.obterPerfil(-1L);
+
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        assertEquals("O ID do cliente deve ser um número positivo.", response.getEntity());
+    }
+
+    @Test
+    @TestSecurity(user = "testUser", roles = {"user"})
+    void testObterPerfil_IdNulo() {
+        Response response = controller.obterPerfil(null);
+
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
         assertEquals("O ID do cliente deve ser um número positivo.", response.getEntity());
     }

@@ -4,6 +4,7 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -25,16 +26,15 @@ class InvestimentoControllerTest {
     @Test
     @TestSecurity(user = "user", roles = {"user"})
     void deveListarInvestimentosDoClienteComSucesso() {
-
         InvestimentoDTO investimento1 = new InvestimentoDTO();
         investimento1.id = 1L;
-        investimento1.valor = 1000.00;
+        investimento1.valor = new BigDecimal("1000.00");
         investimento1.data = LocalDateTime.now();
         investimento1.rentabilidade = 10.00;
 
         InvestimentoDTO investimento2 = new InvestimentoDTO();
         investimento2.id = 2L;
-        investimento2.valor = 2000.00;
+        investimento2.valor = new BigDecimal("2000.00");
         investimento2.data = LocalDateTime.now();
         investimento2.rentabilidade = 20.00;
 
@@ -79,7 +79,7 @@ class InvestimentoControllerTest {
                 .body(equalTo("O ID do cliente deve ser um número positivo."));
     }
 
-    @Test
+   @Test
     void deveRetornar401QuandoNaoAutenticado() {
 
         given()

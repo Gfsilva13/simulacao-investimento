@@ -3,6 +3,9 @@ package br.gov.caixa.entity.simulacao;
 import br.gov.caixa.entity.business.Cliente;
 import br.gov.caixa.entity.business.ProdutoInvestimento;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -21,10 +24,10 @@ public class Simulacao {
     private ProdutoInvestimento produto;
 
     @Column(nullable = false)
-    private Double valorInvestido;
+    private @Min(value = 100, message = "O valor mínimo permitido é R$ 100") BigDecimal valorInvestido;
 
     @Column(nullable = false)
-    private Double valorFinal;
+    private BigDecimal valorFinal;
 
     @Column(nullable = false)
     private Integer prazoMeses;
@@ -48,19 +51,19 @@ public class Simulacao {
         this.cliente = cliente;
     }
 
-    public Double getValorInvestido() {
+    public @Min(value = 100, message = "O valor mínimo permitido é R$ 100") BigDecimal getValorInvestido() {
         return valorInvestido;
     }
 
-    public void setValorInvestido(Double valorInvestido) {
+    public void setValorInvestido(@Min(value = 100, message = "O valor mínimo permitido é R$ 100") BigDecimal valorInvestido) {
         this.valorInvestido = valorInvestido;
     }
 
-    public Double getValorFinal() {
+    public BigDecimal getValorFinal() {
         return valorFinal;
     }
 
-    public void setValorFinal(Double valorFinal) {
+    public void setValorFinal(BigDecimal valorFinal) {
         this.valorFinal = valorFinal;
     }
 
